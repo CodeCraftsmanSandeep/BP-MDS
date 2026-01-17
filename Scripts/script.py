@@ -35,7 +35,7 @@ for root, _, files in os.walk(inputs_dir):
     elif first_folder == "M":
         alpha_values = list(range(1, 180 + 1))
     elif first_folder == "L":
-        alpha_values = list(range(1, 60 + 1))
+        alpha_values = list(np.arange(0.5, 60 + 1e-6, 0.5))
     elif first_folder == "XL":
         alpha_values = list(range(1, 60 + 1))
     elif first_folder == "XXL":
@@ -93,6 +93,10 @@ for root, _, files in os.walk(inputs_dir):
                         time_val = float(line1.split(":")[1].strip())
                         max_memory_diff = float(line2.split(":")[1].strip())
                         cost_val = float(line3.split(":")[1].strip())
+
+                        print("Time: ", time_val)
+                        print("Mem: ", max_memory_diff)
+                        print("Cost: ", cost_val)
 
                         total_time += time_val
                         total_max_memory_diff += max_memory_diff

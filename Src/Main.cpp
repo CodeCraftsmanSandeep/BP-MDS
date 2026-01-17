@@ -1,8 +1,8 @@
 #include "Command_Line_Args.h"
 #include "Initializer.h" 
 #include "Bucket_Partitioned_MDS.h"
-
-int main(int argc, char* argv[])
+ 
+int main(int argc, char* argv[]) 
 { 
     // Parse command line arguments 
     const Command_Line_Args args(argc, argv);

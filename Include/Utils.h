@@ -114,6 +114,7 @@ public:
     }
 };
 
-double get_peak_mb();
+double get_curr_rss_mb();
+double get_peak_rss_mb();
 
 #endif
