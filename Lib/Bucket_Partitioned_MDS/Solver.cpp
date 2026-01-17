@@ -558,7 +558,7 @@ namespace Bucket_Partitioned_MDS
         * @param cvrp: CVRP to solve
         * @return: Solution after solving the CVRP problem using Bucket Partitioned MDS 
         */
-        double maxMB_before_execution = get_peak_mb();
+        double maxMB_before_execution = get_curr_rss_mb();
 
         // Start execution timer
         auto start = std::chrono::high_resolution_clock::now();
@@ -621,7 +621,7 @@ namespace Bucket_Partitioned_MDS
         }
 
         auto end                    = std::chrono::high_resolution_clock::now();
-        double maxMB_after_execution = get_peak_mb();
+        double maxMB_after_execution = get_peak_rss_mb();
 
         double execution_time = std::chrono::duration<double>(end - start).count();
         double maxMB_difference = maxMB_after_execution - maxMB_before_execution;
