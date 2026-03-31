@@ -468,18 +468,21 @@ namespace Bucket_Partitioned_MDS
         int index;
         node_t prev_node            = v;
         capacity_t residue_capacity = cvrp.capacity();
+        std::pair <int, node_t*> push_candidate;
 
         // DFS iterative
         while(!rec.empty()) 
         {
             index = rec.top().first; 
             neigh = rec.top().second;
+            push_candidate = {-1, nullptr};
 
             while(index >= 0) 
             {
                 v_index = neigh[index];
                 v       = bucket[v_index];
-                
+                index--;
+
                 if(!visited[v_index]) 
                 {
                     visited[v_index] = true;
@@ -501,21 +504,19 @@ namespace Bucket_Partitioned_MDS
                 
                         // Start a new route
                         curr_route.push_back(v);
-                        residue_capacity    -= cvrp[v].demand;
                         cost                += cvrp.distance(prev_node, v);
+                        residue_capacity    -= cvrp[v].demand;
                         prev_node           = v; 
                     }
 
                     // Pushing vertex v into stack for DFS
-                    rec.top().first = index - 1; 
                     neigh_size      = mst_adj[v_index].size();
                     neigh           = new node_t[neigh_size];
                     std::copy(mst_adj[v_index].begin(), mst_adj[v_index].end(), neigh);
                     std::shuffle(neigh, neigh + neigh_size, rng);
-                    rec.push({neigh_size - 1, neigh});
+                    push_candidate = {neigh_size - 1, neigh};
                     break;
                 }
-                index--;
             }
 
             if(index < 0) 
@@ -523,6 +524,15 @@ namespace Bucket_Partitioned_MDS
                 // Every neighbour of vertex is visited
                 free(rec.top().second);
                 rec.pop();
+            }
+            else 
+            {
+                rec.top().first = index;
+            }
+
+            if (push_candidate.first != -1)
+            {
+                rec.push(push_candidate);
             }
         }
 
