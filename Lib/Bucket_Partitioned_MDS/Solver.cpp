@@ -486,28 +486,19 @@ namespace Bucket_Partitioned_MDS
                 if(!visited[v_index]) 
                 {
                     visited[v_index] = true;
-                    if(residue_capacity >= cvrp[v].demand) 
-                    {
-                        // Push vertex v into current route
-                        curr_route.push_back(v);
-                        cost                += cvrp.distance(prev_node, v);
-                        residue_capacity    -= cvrp[v].demand;
-                        prev_node           = v;                    
-                    } 
-                    else 
+                    if (residue_capacity < cvrp[v].demand)
                     {
                         // End the current route
                         routes.push_back(std::move(curr_route));
-                        cost                += cvrp.distance(prev_node, depot); 
-                        prev_node           = depot; 
+                        cost                += cvrp.distance(prev_node, depot);  
                         residue_capacity    = cvrp.capacity(); 
-                
-                        // Start a new route
-                        curr_route.push_back(v);
-                        cost                += cvrp.distance(prev_node, v);
-                        residue_capacity    -= cvrp[v].demand;
-                        prev_node           = v; 
+                        prev_node           = depot;
                     }
+                    // Start a new route
+                    curr_route.push_back(v);
+                    cost                += cvrp.distance(prev_node, v);
+                    residue_capacity    -= cvrp[v].demand;
+                    prev_node           = v; 
 
                     // Pushing vertex v into stack for DFS
                     neigh_size      = mst_adj[v_index].size();

@@ -104,7 +104,7 @@ bool Unit_Vector_2D::is_in_between(
     /*
     * is_in_between: Function for checking whether this vector is in R = [vec1, vec2) region 
         i.e vec1 swiped in anti clock wise direction until vec2
-    * @param vec1: Starting vector of the intereset region R
+    * @param vec1: Starting vector of the interest region R
     * @param vec2: Ending vector of the interest region R
     * @return: Returns true if this vector is inside R
     */
