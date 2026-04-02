@@ -43,7 +43,7 @@ void Min_Heap::DecreaseKey(const Min_Heap_Node& node)
     
     if(index > last_index) 
     {
-        // The vertex is already is present in MST and that is why it is out of heap
+        // The vertex is already present in MST and that is why it is out of heap
         // So no need to reduce further
         return;
     }
