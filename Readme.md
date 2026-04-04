@@ -10,7 +10,7 @@
 | XXL | 100,001 - 1,000,000 |
 | XXXL | 1,000,001 - 10,000,000 |
 
-test_pipeline.py:
+## test_pipeline.py:
 The test_pipeline.py script is the main automation tool used to compile, test, and benchmark the BP_MDS routing algorithm. It automatically runs the C++ code across different input files, tests various parameters, and saves the results into neat CSV files so they can be plotted later.
 
 Because High-Performance Computing (HPC) system performance can fluctuate, the script is configured to run every single test 5 times (NUM_EXECUTIONS = 5) and averages the execution time and memory usage to ensure the final results are highly accurate and reliable.
