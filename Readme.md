@@ -62,6 +62,7 @@ Because finding the "best $\alpha$" for massive 2-million node graphs in Step 1 
 
 ## Running the Entire Pipeline:
 To run all the tests from start to finish, simply run the test_pipeline.py script after cloning this repo.
+    
     $ python3 test_pipeline.py
 
 ## How to Customize the Run (Skipping Steps)
@@ -70,18 +71,19 @@ If you already generated some data and only want to run one specific step, you c
 Open test_pipeline.py and scroll to the very bottom of the file to the __main__ block.
 Add a # symbol in front of the steps you want to skip.
 
-if __name__ == "__main__":
-    print("Initializing BP_MDS Master Pipeline...")
 
-    # Always leave the compile step on so your binaries are up to date
-    compile_binaries()
+    if __name__ == "__main__":
+        print("Initializing BP_MDS Master Pipeline...")
     
-    # --- Pipeline Execution Block ---
-    # step0_fast_track()            # SKIPPED
+        # Always leave the compile step on so your binaries are up to date
+        compile_binaries()
+        
+        # --- Pipeline Execution Block ---
+        # step0_fast_track()            # SKIPPED
+        
+        # step1_script()              # SKIPPED
+        # step2_take_min_cost()       # SKIPPED
+        step4_benchmark()           # Will run
+        step5_threads()             # Will run
+        # step3_rho_test()            # SKIPPED
     
-    # step1_script()              # SKIPPED
-    # step2_take_min_cost()       # SKIPPED
-    step4_benchmark()           # Will run
-    step5_threads()             # Will run
-    # step3_rho_test()            # SKIPPED
-
