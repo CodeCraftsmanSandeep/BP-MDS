@@ -513,7 +513,7 @@ namespace Bucket_Partitioned_MDS
             if(index < 0) 
             {
                 // Every neighbour of vertex is visited
-                free(rec.top().second);
+                delete[] rec.top().second;
                 rec.pop();
             }
             else 

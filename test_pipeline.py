@@ -136,7 +136,7 @@ def step1_script():
     print(">>> EXECUTING STEP 1: Parameter Sweeping (script.py)")
     print("="*60)
 
-    num_executions = 1
+    num_executions = 5
     rho_values = [5000]
 
     inputs_dir      = "Inputs"
