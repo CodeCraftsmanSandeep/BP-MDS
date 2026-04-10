@@ -5,6 +5,7 @@
 #include <random>
 #include <algorithm>
 #include <climits>
+#include <set>
 
 namespace Bucket_Partitioned_MDS
 {
@@ -99,6 +100,7 @@ namespace Bucket_Partitioned_MDS
         return;
     }
 
+    // CPP STL Set version
     void Solver::construct_mst(
         const CVRP&                         cvrp,
         const std::vector <node_t>&         bucket,
@@ -112,50 +114,72 @@ namespace Bucket_Partitioned_MDS
         * @return: Returns nothing
         */
 
-        // Create min heap
-        const int num_nodes = bucket.size();
-        Min_Heap min_heap(num_nodes);
+        auto N = bucket.size();
+        if (N == 0) return;
 
-        // Starting from depot
-        const node_t depot = 0;
-        const node_t depot_index = 0;
-        node_t u = depot;
-        node_t u_index = depot_index;             
-        min_heap.DecreaseKey(Min_Heap_Node(-1, depot_index, 0));    
-        Min_Heap_Node min_node = min_heap.pop(); 
-        node_t v;
-        node_t v_index;
-        for(v_index = 1; v_index < num_nodes; v_index++) 
+        const node_t INIT = -1;
+
+        // Initialize tracking arrays using the size of the bucket
+        // We use std::numeric_limits to avoid type mismatch issues with INT_MAX
+        std::vector<distance_t> key(N, std::numeric_limits<distance_t>::max());
+        std::vector<node_t> toEdges(N, INIT); 
+        std::vector<bool> visited(N, false);
+
+        // Set holds {distance, bucket_index}
+        std::set<std::pair<distance_t, node_t>> active; 
+
+        node_t src_index = 0;
+        key[src_index] = 0.0;
+        active.insert({0.0, src_index});
+
+        while (!active.empty())
         {
-            min_heap.DecreaseKey(Min_Heap_Node(u_index, v_index, cvrp.distance(bucket[u_index], bucket[v_index]))); 
-        }
+            // Extract the node with the minimum distance
+            auto where_index = active.begin()->second;
+            active.erase(active.begin());
 
-        // Adding edges to MST 
-        while(!min_heap.empty()) 
-        { 
-            // Get the minimum weight edge 
-            min_node = min_heap.pop();
-            u_index = min_node.u; // Index of the node in the bucket
-            v_index = min_node.v; // Index of the neighbour of bucket[u_index]
-
-            // Add the edge to the graph (v_index is added to MST)
-            adj[u_index].push_back(v_index);                                
-            adj[v_index].push_back(u_index);       
-
-            // Get the corresponding vertex in entire CVRP space                                      
-            v = bucket[v_index];                                                       
-
-            // Loop over all neighbours of v_index 
-            for(node_t w_index = 0; w_index < num_nodes; w_index++) 
+            // If we already finalized this node (stale pair in set), skip it
+            if (visited[where_index])
             {
-                node_t w = bucket[w_index];
-                min_heap.DecreaseKey(Min_Heap_Node(v_index, w_index, cvrp.distance(v, w)));
+                continue;
+            }
+            
+            visited[where_index] = true;
+
+            // Loop over all nodes in the bucket using their indices
+            for (node_t i = 0; i < N; ++i)
+            {
+                if (!visited[i])
+                {                         
+                    // Get the actual node IDs to calculate the correct distance
+                    distance_t dist = cvrp.distance(bucket[where_index], bucket[i]);
+                    
+                    if (dist < key[i])
+                    {                         
+                        key[i] = dist; 
+                        // Insert the new shorter distance. The old pair remains in the set 
+                        // but will be safely ignored later due to the visited[] check.
+                        active.insert({key[i], i});
+                        toEdges[i] = where_index;
+                    }
+                }
             }
         }
 
+        // Reconstruct MST into the adjacency list using bucket indices
+        for (node_t u_index = 1; u_index < N; ++u_index) 
+        { 
+            node_t v_index = toEdges[u_index];
+            if (v_index != INIT)
+            {
+                adj[u_index].push_back(v_index);
+                adj[v_index].push_back(u_index);
+            }
+        }
+        
         return;
     }
-
+    
     distance_t Solver::get_route_distance(
         const CVRP&                 cvrp,
         const std::vector <node_t>& route) const

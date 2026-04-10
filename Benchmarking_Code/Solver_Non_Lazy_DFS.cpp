@@ -422,6 +422,7 @@ namespace Bucket_Partitioned_MDS
         return;
     }
 
+    //Non Lazy version
     void Solver::get_routes(
         const CVRP&                                 cvrp, 
         const std::vector <std::vector <node_t>>&   mst_adj, 
@@ -429,113 +430,74 @@ namespace Bucket_Partitioned_MDS
         std::vector <std::vector <node_t>>&         routes, 
         distance_t&                                 cost) const
     {
-        /*
-        * get_routes: Helper function to construct randomized routes from MST
-        * @param cvrp: CVRP instance
-        * @param mst_adj: Adjacency list of MST 
-        * @param bucket: Nodes in the bucket
-        * @param routes: Routes constructed from random DFS order of MST
-        * @param const: Total cost of the routes constructed
-        * @return: Returns nothing
-        */
-
-        // Helping variables & storage
         const int num_nodes = bucket.size();
-        if(num_nodes == 1) return;          
-        const node_t depot          = cvrp.depot();
-        const node_t depot_index    = 0; // index of depot in the bucket
-        std::vector <bool> visited(num_nodes, false);
+        if(num_nodes <= 1) return;
 
-        // Random engine
+        const node_t depot = cvrp.depot();
+        const node_t depot_index = 0;
+
+        // Copy the entire MST adjacency structure to local memory
+        std::vector<std::vector<node_t>> local_mst = mst_adj; 
+        
         std::random_device rd;
         std::mt19937 rng(rd());
 
-        // Data structures for route which is under construction
-        std::vector <node_t> curr_route;
+        // Randomly adjust (shuffle) all neighbor lists in the local copy
+        for(auto& neighbors : local_mst) {
+            std::shuffle(neighbors.begin(), neighbors.end(), rng);
+        }
 
-        // Stack data structure for DFS
-        std::stack <std::pair <int, node_t*>> rec;
+        std::vector<bool> visited(num_nodes, false);
+        std::vector<node_t> curr_route;
+        std::stack<node_t> st;
 
-        // Starting DFS with depot
-        node_t v                    = depot;
-        node_t v_index              = depot_index;
-        visited[v_index]            = true;                    
-        int neigh_size              = mst_adj[v_index].size();
-        node_t* neigh               = new node_t[neigh_size];
-        std::copy(mst_adj[v_index].begin(), mst_adj[v_index].end(), neigh);
-        std::shuffle(neigh, neigh + neigh_size, rng);
-        rec.push({neigh_size - 1, neigh});
-        int index;
-        node_t prev_node            = v;
+        st.push(depot_index);
+        visited[depot_index] = true;
+        
+        node_t prev_node = depot;
         capacity_t residue_capacity = cvrp.capacity();
-        std::pair <int, node_t*> push_candidate;
 
-        // DFS iterative
-        while(!rec.empty()) 
-        {
-            index = rec.top().first; 
-            neigh = rec.top().second;
-            push_candidate = {-1, nullptr};
+        // Standard Iterative DFS using the pre-shuffled local_mst
+        while(!st.empty()) {
+            node_t u_idx = st.top();
+            bool found_next = false;
 
-            while(index >= 0) 
-            {
-                v_index = neigh[index];
-                v       = bucket[v_index];
-                index--;
+            // We use local_mst[u_idx] directly 
+            for(auto& v_idx : local_mst[u_idx]) {
+                if(!visited[v_idx]) {
+                    visited[v_idx] = true;
+                    node_t v = bucket[v_idx];
 
-                if(!visited[v_index]) 
-                {
-                    visited[v_index] = true;
-                    if (residue_capacity < cvrp[v].demand)
-                    {
-                        // End the current route
+                    // Capacity Logic
+                    if(residue_capacity >= cvrp[v].demand) {
+                        curr_route.push_back(v);
+                        cost += cvrp.distance(prev_node, v);
+                        residue_capacity -= cvrp[v].demand;
+                        prev_node = v;
+                    } else {
                         routes.push_back(std::move(curr_route));
-                        cost                += cvrp.distance(prev_node, depot);  
-                        residue_capacity    = cvrp.capacity(); 
-                        prev_node           = depot;
+                        cost += cvrp.distance(prev_node, depot);
+                        residue_capacity = cvrp.capacity() - cvrp[v].demand;
+                        curr_route.push_back(v);
+                        cost += cvrp.distance(depot, v);
+                        prev_node = v;
                     }
-                    // Start a new route
-                    curr_route.push_back(v);
-                    cost                += cvrp.distance(prev_node, v);
-                    residue_capacity    -= cvrp[v].demand;
-                    prev_node           = v; 
 
-                    // Pushing vertex v into stack for DFS
-                    neigh_size      = mst_adj[v_index].size();
-                    neigh           = new node_t[neigh_size];
-                    std::copy(mst_adj[v_index].begin(), mst_adj[v_index].end(), neigh);
-                    std::shuffle(neigh, neigh + neigh_size, rng);
-                    push_candidate = {neigh_size - 1, neigh};
+                    st.push(v_idx);
+                    found_next = true;
                     break;
                 }
             }
 
-            if(index < 0) 
-            {
-                // Every neighbour of vertex is visited
-                delete[] rec.top().second;
-                rec.pop();
-            }
-            else 
-            {
-                rec.top().first = index;
-            }
-
-            if (push_candidate.first != -1)
-            {
-                rec.push(push_candidate);
-            }
+            if(!found_next) st.pop();
         }
 
-        // Pushing remaining nodes in route into list of routes
-        if(!curr_route.empty()) 
-        { 
+        if(!curr_route.empty()) {
             routes.push_back(std::move(curr_route));
-            cost += cvrp.distance(prev_node, depot); 
+            cost += cvrp.distance(prev_node, depot);
         }
-
-        return;
     }
+
 
     Solver::Solver(
         const double _alpha, 
