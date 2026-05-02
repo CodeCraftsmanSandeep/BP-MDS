@@ -54,8 +54,8 @@ def distance(x,y):
     return math.sqrt((x[0] - y[0])**2 + (x[1] - y[1])**2)
 
 # constants
-maxCoord = 1000
-decay = 40
+maxCoord = 10000
+decay = 200
 
 # read input argmuments
 n = int(sys.argv[1])
