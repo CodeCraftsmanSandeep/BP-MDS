@@ -1,3 +1,58 @@
+# Project outputs / build
 Outputs/
 Bin/
 temp_dir/
+*.o
+*.out
+*.exe
+*.a
+*.so
+*.dylib
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+.venv/
+venv/
+env/
+ENV/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Linux
+*~
+.nfs*
+
+# Editors / IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~.nib
+.project
+.classpath
+.settings/
+
+# Cursor / local tooling
+.cursor/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Logs / temp
+*.log
+*.tmp
+*.temp
+.cache/
