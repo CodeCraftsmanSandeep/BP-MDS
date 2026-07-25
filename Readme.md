@@ -1,20 +1,20 @@
-# BP-MDS
+# BP-MDS: Bucket-Partitioned MDS CVRP Solver (Million Scale)
 
 ![2-D partitions](Results/2-d-partitions-refined/2-d-partitions-refined.png)
 
-**Bucket-Partitioned Minimum-Degree Search** — a fast, parallel heuristic for the Capacitated Vehicle Routing Problem (CVRP).
+Parallel **Bucket-Partitioned Minimum-Degree Search** for the Capacitated Vehicle Routing Problem (CVRP), built to handle million-customer instances.
 
-Customers around the depot are split into angular **buckets** (angle $\alpha$). Each bucket builds an MST and explores $\rho$ randomized DFS orderings — in parallel with OpenMP.
+The plane is partitioned into angular buckets from the depot (angle **α**). Each bucket is solved via an MST plus **ρ** randomized DFS iterations, with buckets processed in parallel (OpenMP).
 
 ---
 
 ## Quick start
 
+**Needs:** C++17 compiler with OpenMP.
+
 ```bash
-# Build (needs C++17 + OpenMP)
 make
 
-# Run
 ./Bin/bucket-partitioned-MDS \
   --alpha=30 \
   --rho=100 \
@@ -22,60 +22,72 @@ make
   --output=solution.sol
 ```
 
-Benchmarks & parameter sweeps: see [`Scripts/`](Scripts/) (`python3 Scripts/test_pipeline.py`).
+| Flag | Meaning |
+|:-----|:--------|
+| `--alpha` | Partition angle (degrees, `0 < α ≤ 360`) |
+| `--rho` | Number of randomized DFS iterations |
+| `--input` | Path to a `.vrp` instance |
+| `--output` | Path for the solution file |
+
+---
+
+## Plot routes (BKS figures)
+
+From the repo root, one command sets up the venv and generates the plots:
+
+```bash
+bash Scripts/BKSPlotsGenerator/run_bks_plots.sh --pdf --html
+```
+
+That writes:
+
+- `Results/BKSPlots/separated/` — individual plots for **all** of `Inputs/` (same folder layout, e.g. `separated/CVRPLIB/AGS/BKS_Antwerp1_routes.png`)
+- `Results/BKSPlots/combined/` — side-by-side AGS pairs (`BKS_*_combined.png` / `.pdf`)
+
+PNG-only: omit the flags (`bash Scripts/BKSPlotsGenerator/run_bks_plots.sh`).  
+`--html` applies only to separated plots; `--pdf` applies to both.
+
+For manual / advanced usage, see [`Scripts/BKSPlotsGenerator/`](Scripts/BKSPlotsGenerator/).
 
 ---
 
 ## Project structure
 
 ```text
-BP-MDS/
-├── Src/                 # Entry point (Main.cpp)
-├── Include/             # Public headers
-├── Lib/                 # Core implementation
-│   ├── Bucket_Partitioned_MDS/   # CVRP, Solver, Solution
-│   └── Utils/                    # Heap, geometry, memory
-├── Inputs/              # CVRP instances (.vrp) — see Inputs/README.md
-├── Results/             # Figures & experiment artifacts
-├── Scripts/             # Build / benchmark / plotting pipeline
-├── Bin/                 # Built executables (gitignored)
+.
+├── Src/Main.cpp              # Entry point
+├── Include/                  # Headers
+├── Lib/                      # Implementation
+│   ├── Bucket_Partitioned_MDS/
+│   ├── Utils/
+│   ├── Command_Line_Args.cpp
+│   └── Initializer.cpp
+├── Inputs/                   # Instances + BKS solutions
+│   ├── CVRPLIB/              # CMT, Golden, X, AGS
+│   ├── FILO2/I/              # Large Italian regions
+│   ├── Synthetic/            # XML-style generated instances
+│   ├── Sample/               # Tiny toys for local checks
+│   ├── instances.csv
+│   └── README.md
+├── Results/                  # Figures & result artifacts
+├── Scripts/                  # Benchmark / plot / generation tools
 └── Makefile
 ```
 
-| Path | Purpose |
-|:-----|:--------|
-| `Src/` | Program entry |
-| `Lib/` | Algorithm & utilities |
-| `Include/` | Headers |
-| `Inputs/` | Benchmarks (CVRPLIB, FILO2, Synthetic) |
-| `Results/` | Figures / outputs for the paper |
-| `Scripts/` | Automation (`test_pipeline.py`, generators) |
+---
+
+## Build targets
+
+| Binary | Role |
+|:-------|:-----|
+| `Bin/bucket-partitioned-MDS` | Main solver (custom min-heap + lazy DFS) |
+| `Bin/bucket-partitioned-MDS-set` | Baseline using `std::set` for MST |
+| `Bin/bucket-partitioned-MDS-dfs` | Non-lazy DFS variant |
 
 ---
 
-## Instance sizes
+## More detail
 
-| Class | #Customers |
-|:-----:|-----------:|
-| XS | 1 – 100 |
-| S | 101 – 1,000 |
-| M | 1,001 – 10,000 |
-| L | 10,001 – 50,000 |
-| XL | 50,001 – 100,000 |
-| XXL | 100,001 – 1,000,000 |
-| XXXL | 1,000,001 – 10,000,000 |
-
-Full instance list: [`Inputs/README.md`](Inputs/README.md) · index: [`Inputs/instances.csv`](Inputs/instances.csv)
-
----
-
-## Requirements
-
-- **C++17** compiler with **OpenMP**
-- **Python 3** (for `Scripts/` pipeline only)
-
----
-
-## License
-
-See repository for license details.
+- Instance catalog & BKS: [`Inputs/README.md`](Inputs/README.md)
+- Pipeline / scaling / ρ sweeps: [`Scripts/`](Scripts/)
+- Route plots: [`Scripts/BKSPlotsGenerator/run_bks_plots.sh`](Scripts/BKSPlotsGenerator/run_bks_plots.sh)

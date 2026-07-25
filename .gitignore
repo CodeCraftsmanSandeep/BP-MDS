@@ -9,8 +9,8 @@ temp_dir/
 *.so
 *.dylib
 
-# Python
-__pycache__/
+# Python — **/ means "at any depth" (any folder in the repo)
+**/__pycache__/
 *.py[cod]
 *$py.class
 *.egg-info/
@@ -18,24 +18,24 @@ __pycache__/
 dist/
 build/
 *.egg
-.venv/
-venv/
-env/
-ENV/
+**/.venv/
+**/venv/
+**/env/
+**/ENV/
 
-# macOS
-.DS_Store
+# macOS — can appear in any directory
+**/.DS_Store
 .AppleDouble
 .LSOverride
-._*
+**/._*
 
 # Linux
 *~
 .nfs*
 
-# Editors / IDEs
-.vscode/
-.idea/
+# Editors / IDEs — can appear in any directory
+**/.vscode/
+**/.idea/
 *.swp
 *.swo
 *~.nib
@@ -43,11 +43,11 @@ ENV/
 .classpath
 .settings/
 
-# Cursor / local tooling
-.cursor/
+# Cursor local state (keep shared rules if you add them later)
+**/.cursor/
 
 # Env / secrets
-.env
+**/.env
 .env.*
 !.env.example
 
@@ -55,4 +55,4 @@ ENV/
 *.log
 *.tmp
 *.temp
-.cache/
+**/.cache/
