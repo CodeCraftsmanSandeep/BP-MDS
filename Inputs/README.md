@@ -4,6 +4,8 @@ Capacity-only CVRP benchmarks from CVRPLIB, FILO2, and Synthetic XML-style insta
 
 **320** instances &nbsp;·&nbsp; **CVRPLIB** 129 &nbsp;·&nbsp; **FILO2** 20 &nbsp;·&nbsp; **Synthetic** 171
 
+🟢 **XS** 17 &nbsp;·&nbsp; 🟡 **S** 137 &nbsp;·&nbsp; 🟣 **M** 35 &nbsp;·&nbsp; 🟠 **L** 23 &nbsp;·&nbsp; 🔴 **XL** 37 &nbsp;·&nbsp; 🔵 **XXL** 41 &nbsp;·&nbsp; 🟤 **XXXL** 30
+
 Machine-readable index: [`instances.csv`](instances.csv)
 
 ---
@@ -12,7 +14,7 @@ Machine-readable index: [`instances.csv`](instances.csv)
 
 | Symbol | Meaning |
 |:------:|:--------|
-| **Size** | By **#Customers** (`N−1`): 🟢 XS 1–100 · 🟡 S 101–1,000 · 🟣 M 1,001–10,000 · 🟠 L 10,001–50,000 · 🔴 XL 50,001–100,000 · 🔵 XXL 100,001–1,000,000 · 🟤 XXXL 1,000,001–10,000,000 |
+| **Size** | By **#Customers** (`N−1`)<br><table><tr><td>🟢 <b>XS</b></td><td>1 – 100</td></tr><tr><td>🟡 <b>S</b></td><td>101 – 1,000</td></tr><tr><td>🟣 <b>M</b></td><td>1,001 – 10,000</td></tr><tr><td>🟠 <b>L</b></td><td>10,001 – 50,000</td></tr><tr><td>🔴 <b>XL</b></td><td>50,001 – 100,000</td></tr><tr><td>🔵 <b>XXL</b></td><td>100,001 – 1,000,000</td></tr><tr><td>🟤 <b>XXXL</b></td><td>1,000,001 – 10,000,000</td></tr></table> |
 | **Source** | `CVRPLIB` · `FILO2` · `Synthetic` |
 | **Instance** | Clickable path under the source |
 | **N** | `#Customers + 1` (= `DIMENSION`, includes depot) |
