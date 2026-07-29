@@ -2,9 +2,9 @@
 
 Capacity-only CVRP benchmarks from CVRPLIB, FILO2, and Synthetic XML-style instances.
 
-**307** instances &nbsp;·&nbsp; **CVRPLIB** 130 &nbsp;·&nbsp; **FILO2** 20 &nbsp;·&nbsp; **Synthetic** 157
+**310** instances &nbsp;·&nbsp; **CVRPLIB** 130 &nbsp;·&nbsp; **FILO2** 20 &nbsp;·&nbsp; **Synthetic** 160
 
-🟢 **XS** 17 &nbsp;·&nbsp; 🟡 **S** 138 &nbsp;·&nbsp; 🟣 **M** 13 &nbsp;·&nbsp; 🟠 **L** 31 &nbsp;·&nbsp; 🔴 **XL** 37 &nbsp;·&nbsp; 🔵 **XXL** 41 &nbsp;·&nbsp; 🟤 **XXXL** 30
+🟢 **XS** 18 &nbsp;·&nbsp; 🟡 **S** 137 &nbsp;·&nbsp; 🟣 **M** 13 &nbsp;·&nbsp; 🟠 **L** 31 &nbsp;·&nbsp; 🔴 **XL** 37 &nbsp;·&nbsp; 🔵 **XXL** 41 &nbsp;·&nbsp; 🟤 **XXXL** 33
 
 ---
 
@@ -16,7 +16,9 @@ Capacity-only CVRP benchmarks from CVRPLIB, FILO2, and Synthetic XML-style insta
 | **Source** | `CVRPLIB` · `FILO2` · `Synthetic` |
 | **Instance** | Name of the instance |
 | **N** | `#Customers + 1` (= `DIMENSION`, includes depot) |
+| **alpha** | Partition angle |
 | **BKS** | Best-known solution cost (if available) |
+| **cost** | Solution cost at $\rho$ = 10000 |
 
 | S.No | Size | Source | Instance | N | alpha | BKS | cost |
 |----:|:----:|:-------|:---------|--:|:---:|:---:|:---:|
@@ -25,34 +27,34 @@ Capacity-only CVRP benchmarks from CVRPLIB, FILO2, and Synthetic XML-style insta
 | 3 | 🟢 XS | CVRPLIB | E-n76-k10 | 76 | 354.0 | 830.0 | 917.574667 |
 | 4 | 🟢 XS | CVRPLIB | E-n76-k14 | 76 | 207.0 | 1021.0 | 1086.848 |
 | 5 | 🟢 XS | CVRPLIB | P-n101-k4 | 101 | 238.0 | 681.0 | 757.906767 |
-| 6 | 🟢 XS | Synthetic | XML100_1173_01 | 101 | 191.0 | — | 213391.241367 |
-| 7 | 🟢 XS | Synthetic | XML100_1176_01 | 101 | 236.0 | — | 105279.2815 |
-| 8 | 🟢 XS | Synthetic | XML100_2173_01 | 101 | 86.0 | — | 173046.2655 |
-| 9 | 🟢 XS | Synthetic | XML100_2176_01 | 101 | 194.0 | — | 98615.8901 |
-| 10 | 🟢 XS | Synthetic | XML10_1173_01 | 11 | 75.0 | — | 43699.762 |
-| 11 | 🟢 XS | Synthetic | XML10_1176_01 | 11 | 150.0 | — | 33680.0944 |
-| 12 | 🟢 XS | Synthetic | XML10_2173_01 | 11 | 199.0 | — | 37183.161 |
-| 13 | 🟢 XS | Synthetic | XML10_2176_01 | 11 | 305.0 | — | 34116.3892 |
-| 14 | 🟢 XS | Synthetic | XML50_1173_01 | 51 | 137.0 | — | 129778.2002 |
-| 15 | 🟢 XS | Synthetic | XML50_1176_01 | 51 | 82.0 | — | 69002.8248 |
-| 16 | 🟢 XS | Synthetic | XML50_2173_01 | 51 | 180.0 | — | 93994.1571 |
-| 17 | 🟢 XS | Synthetic | XML50_2176_01 | 51 | 120.0 | — | 68241.945 |
-| 18 | 🟡 S | CVRPLIB | CMT5 | 200 | 154.0 | 1291.289144 | 1476.6534 |
-| 19 | 🟡 S | CVRPLIB | F-n135-k7 | 135 | 333.0 | 1162.0 | 1240.6651 |
-| 20 | 🟡 S | CVRPLIB | Golden_10 | 324 | 35.0 | 735.427307 | 843.038367 |
-| 21 | 🟡 S | CVRPLIB | Golden_11 | 400 | 84.0 | 911.980164 | 1050.675933 |
-| 22 | 🟡 S | CVRPLIB | Golden_12 | 484 | 29.0 | 1100.665283 | 1267.8596 |
-| 23 | 🟡 S | CVRPLIB | Golden_13 | 253 | 62.0 | 857.189 | 955.0706 |
-| 24 | 🟡 S | CVRPLIB | Golden_14 | 321 | 111.0 | 1080.55 | 1226.786 |
-| 25 | 🟡 S | CVRPLIB | Golden_15 | 397 | 60.0 | 1337.2677 | 1480.567433 |
-| 26 | 🟡 S | CVRPLIB | Golden_16 | 481 | 74.0 | 1611.276969 | 1838.973867 |
-| 27 | 🟡 S | CVRPLIB | Golden_17 | 241 | 36.0 | 707.756 | 762.7093 |
-| 28 | 🟡 S | CVRPLIB | Golden_18 | 301 | 24.0 | 995.133 | 1044.6267 |
-| 29 | 🟡 S | CVRPLIB | Golden_19 | 361 | 36.0 | 1365.6 | 1496.3818 |
-| 30 | 🟡 S | CVRPLIB | Golden_20 | 421 | 51.0 | 1817.59 | 2000.607567 |
-| 31 | 🟡 S | CVRPLIB | Golden_9 | 256 | 36.0 | 579.702026 | 646.5808 |
-| 32 | 🟡 S | CVRPLIB | X-n1001-k43 | 1001 | 80.0 | 72355.0 | 80317.8906 |
-| 33 | 🟡 S | CVRPLIB | X-n101-k25 | 101 | 360.0 | 27591.0 | 30158.6603 |
+| 6 | 🟢 XS | CVRPLIB | X-n101-k25 | 101 | 360.0 | 27591.0 | 30158.6603 |
+| 7 | 🟢 XS | Synthetic | XML100_1173_01 | 101 | 191.0 | — | 213391.241367 |
+| 8 | 🟢 XS | Synthetic | XML100_1176_01 | 101 | 236.0 | — | 105279.2815 |
+| 9 | 🟢 XS | Synthetic | XML100_2173_01 | 101 | 86.0 | — | 173046.2655 |
+| 10 | 🟢 XS | Synthetic | XML100_2176_01 | 101 | 194.0 | — | 98615.8901 |
+| 11 | 🟢 XS | Synthetic | XML10_1173_01 | 11 | 75.0 | — | 43699.762 |
+| 12 | 🟢 XS | Synthetic | XML10_1176_01 | 11 | 150.0 | — | 33680.0944 |
+| 13 | 🟢 XS | Synthetic | XML10_2173_01 | 11 | 199.0 | — | 37183.161 |
+| 14 | 🟢 XS | Synthetic | XML10_2176_01 | 11 | 305.0 | — | 34116.3892 |
+| 15 | 🟢 XS | Synthetic | XML50_1173_01 | 51 | 137.0 | — | 129778.2002 |
+| 16 | 🟢 XS | Synthetic | XML50_1176_01 | 51 | 82.0 | — | 69002.8248 |
+| 17 | 🟢 XS | Synthetic | XML50_2173_01 | 51 | 180.0 | — | 93994.1571 |
+| 18 | 🟢 XS | Synthetic | XML50_2176_01 | 51 | 120.0 | — | 68241.945 |
+| 19 | 🟡 S | CVRPLIB | CMT5 | 200 | 154.0 | 1291.289144 | 1476.6534 |
+| 20 | 🟡 S | CVRPLIB | F-n135-k7 | 135 | 333.0 | 1162.0 | 1240.6651 |
+| 21 | 🟡 S | CVRPLIB | Golden_10 | 324 | 35.0 | 735.427307 | 843.038367 |
+| 22 | 🟡 S | CVRPLIB | Golden_11 | 400 | 84.0 | 911.980164 | 1050.675933 |
+| 23 | 🟡 S | CVRPLIB | Golden_12 | 484 | 29.0 | 1100.665283 | 1267.8596 |
+| 24 | 🟡 S | CVRPLIB | Golden_13 | 253 | 62.0 | 857.189 | 955.0706 |
+| 25 | 🟡 S | CVRPLIB | Golden_14 | 321 | 111.0 | 1080.55 | 1226.786 |
+| 26 | 🟡 S | CVRPLIB | Golden_15 | 397 | 60.0 | 1337.2677 | 1480.567433 |
+| 27 | 🟡 S | CVRPLIB | Golden_16 | 481 | 74.0 | 1611.276969 | 1838.973867 |
+| 28 | 🟡 S | CVRPLIB | Golden_17 | 241 | 36.0 | 707.756 | 762.7093 |
+| 29 | 🟡 S | CVRPLIB | Golden_18 | 301 | 24.0 | 995.133 | 1044.6267 |
+| 30 | 🟡 S | CVRPLIB | Golden_19 | 361 | 36.0 | 1365.6 | 1496.3818 |
+| 31 | 🟡 S | CVRPLIB | Golden_20 | 421 | 51.0 | 1817.59 | 2000.607567 |
+| 32 | 🟡 S | CVRPLIB | Golden_9 | 256 | 36.0 | 579.702026 | 646.5808 |
+| 33 | 🟡 S | CVRPLIB | X-n1001-k43 | 1001 | 80.0 | 72355.0 | 80317.8906 |
 | 34 | 🟡 S | CVRPLIB | X-n106-k14 | 106 | 64.0 | 26362.0 | 27415.470667 |
 | 35 | 🟡 S | CVRPLIB | X-n110-k13 | 110 | 142.0 | 14971.0 | 16110.8025 |
 | 36 | 🟡 S | CVRPLIB | X-n115-k10 | 115 | 132.0 | 12747.0 | 14072.583 |
@@ -327,3 +329,6 @@ Capacity-only CVRP benchmarks from CVRPLIB, FILO2, and Synthetic XML-style insta
 | 305 | 🟤 XXXL | Synthetic | XML2000000_3161_01 | 2000001 | 0.1 | — | 12508006229.318399 |
 | 306 | 🟤 XXXL | Synthetic | XML2000000_3173_01 | 2000001 | 0.1 | — | 4748557099.148767 |
 | 307 | 🟤 XXXL | Synthetic | XML2000000_3176_01 | 2000001 | 0.1 | — | 1258302892.5847 |
+| 308 | 🟤 XXXL | Synthetic | XML5000000_1176_01 | 5000001 | 0.1 | — | 2537175956.5832 |
+| 309 | 🟤 XXXL | Synthetic | XML5000000_2176_01 | 5000001 | 0.2 | — | 1573769553.1896 |
+| 310 | 🟤 XXXL | Synthetic | XML5000000_2173_01 | 5000001 | 0.1 | — | 5891503289.8549 |
