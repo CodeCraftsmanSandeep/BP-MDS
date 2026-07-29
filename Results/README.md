@@ -40,7 +40,7 @@ Capacity-only CVRP benchmarks from CVRPLIB, FILO2, and Synthetic XML-style insta
 | 16 | 🟢 XS | Synthetic | XML50_1176_01 | 51 | 82.0 | — | 69002.8248 |
 | 17 | 🟢 XS | Synthetic | XML50_2173_01 | 51 | 180.0 | — | 93994.1571 |
 | 18 | 🟢 XS | Synthetic | XML50_2176_01 | 51 | 120.0 | — | 68241.945 |
-| 19 | 🟡 S | CVRPLIB | CMT5 | 200 | 154.0 | 1291.289144 | 1476.6534 |
+| 19 | 🟡 S | CVRPLIB | CMT5 | 200 | 135.0 | 1291.289144 | 1476.6534 |
 | 20 | 🟡 S | CVRPLIB | F-n135-k7 | 135 | 333.0 | 1162.0 | 1240.6651 |
 | 21 | 🟡 S | CVRPLIB | Golden_10 | 324 | 35.0 | 735.427307 | 843.038367 |
 | 22 | 🟡 S | CVRPLIB | Golden_11 | 400 | 84.0 | 911.980164 | 1050.675933 |
