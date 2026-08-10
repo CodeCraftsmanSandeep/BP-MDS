@@ -20,8 +20,8 @@
   <a href="#bks-routes-at-a-glance">Routes</a> ·
   <a href="#quick-start">Quick start</a> ·
   <a href="#platforms">Platforms</a> ·
-  <a href="Inputs/README.md">310 instances</a> ·
-  <a href="Results/README.md">Results</a>
+  <a href="Inputs">310 instances</a> ·
+  <a href="Results">Results</a>
 </p>
 
 ---
@@ -67,7 +67,7 @@ flowchart LR
   <img src="Results/BKSPlots/combined/BKS_Antwerp1_Antwerp2_combined.png" alt="Antwerp1 vs Antwerp2 BKS routes" width="920"/>
 </p>
 
-<p align="center"><sub>Antwerp — more under <code>Results/BKSPlots/combined/</code></sub></p>
+<p align="center"><sub>Antwerp — more under <code>Results/BKSPlots/</code></sub></p>
 
 Regenerate figures:
 
