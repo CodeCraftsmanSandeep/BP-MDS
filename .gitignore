@@ -56,3 +56,9 @@ build/
 *.tmp
 *.temp
 **/.cache/
+
+*.zip
+
+# Large inputs (hosted via Releases; keep local copies but don't commit)
+Inputs/Synthetic/
+Inputs/FILO2/
