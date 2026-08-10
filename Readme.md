@@ -41,13 +41,12 @@
 
 The code follows this pipeline end-to-end (`Src/Main.cpp` → `Lib/Bucket_Partitioned_MDS/`):
 
-<p align="center">
-  <img src="Results/assets/bp-mds-pipeline.svg" alt="BP-MDS pipeline: .vrp → parse → partition α → MST → ρ DFS → .sol" width="920"/>
-</p>
-
-```text
-  .vrp  →  Parse/init (OpenMP)  →  Partition α  →  MST/bucket  →  ρ × DFS  →  Merge · verify · .sol
-```
+1. **`.vrp` instance** — load customers, demands, capacity  
+2. **Parse & init** — CLI args, OpenMP setup  
+3. **Partition α** — angular buckets around the depot  
+4. **MST / bucket** — spanning tree on each bucket  
+5. **ρ × DFS** — randomized depth-first tours; keep the best  
+6. **Merge · verify · `.sol`** — combine routes and write the solution  
 
 **In one line:** *partition → MST → diversify DFS → parallel reduce → solution.*
 
@@ -114,7 +113,7 @@ BP-MDS/
 ├── Include/ · Lib/              # Solver, CVRP I/O, utils, OpenMP init
 ├── Inputs/                      # Sample + catalog (CSV / README)
 ├── Results/
-│   ├── assets/                  # README marketing figures (pipeline, partitions)
+│   ├── assets/                  # README figures (e.g. partitions)
 │   ├── BKSPlots/                # Route plots (combined / separated)
 │   ├── Output/                  # Solver .sol outputs
 │   ├── ExperimentalEvaluation/  # Ablation solver sources
