@@ -62,13 +62,10 @@ For manual / advanced usage, see [`Scripts/BKSPlotsGenerator/`](Scripts/BKSPlots
 │   ├── Utils/
 │   ├── Command_Line_Args.cpp
 │   └── Initializer.cpp
-├── Inputs/                   # Instances + BKS solutions
-│   ├── CVRPLIB/              # CMT, Golden, X, AGS
-│   ├── FILO2/I/              # Large Italian regions
-│   ├── Synthetic/            # XML-style generated instances
+├── Inputs/                   # Catalog + Sample; full sets via Releases
 │   ├── Sample/               # Tiny toys for local checks
 │   ├── instances.csv
-│   └── README.md
+│   └── README.md             # CVRPLIB / FILO2 / Synthetic via GitHub Releases
 ├── Results/                  # Figures & result artifacts
 ├── Scripts/                  # Benchmark / plot / generation tools
 └── Makefile
