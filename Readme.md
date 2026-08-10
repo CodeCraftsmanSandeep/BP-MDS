@@ -81,8 +81,10 @@ bash Scripts/BKSPlotsGenerator/run_bks_plots.sh --pdf --html
 ## Quick start
 
 ```bash
-# Build  (macOS: make CXX=g++-15)
-make
+# Build  (macOS: add CXX=g++-15)
+make                    # main solver → Bin/bucket-partitioned-MDS
+make bench-marking      # main + set / dfs / bfs / buckets variants
+make clean              # wipe Bin/
 
 # Solve the toy sample
 mkdir -p Results/Output/Sample
@@ -116,14 +118,15 @@ BP-MDS/
 │   ├── assets/                  # README figures (e.g. partitions)
 │   ├── BKSPlots/                # Route plots (combined / separated)
 │   ├── Output/                  # Solver .sol outputs
-│   ├── ExperimentalEvaluation/  # Ablation solver sources
+│   ├── ExperimentalEvaluation/  # Experimental notes / extras
 │   └── README.md                # Per-instance costs & gaps
-├── Scripts/                     # Plots & tooling
-└── Makefile                     # → Bin/bucket-partitioned-MDS
+├── Scripts/
+│   ├── BenchmarkingCode/        # Ablation solvers (set / dfs / bfs / buckets)
+│   └── …                        # Plots & tooling
+└── Makefile                     # make · make bench-marking · make clean
 ```
 
-Ablation variants (set / non-lazy DFS / BFS / buckets) live under  
-`Results/ExperimentalEvaluation/Code/` and **BPMDS_Scripts** — not this Makefile.
+Ablation binaries: `make bench-marking` (sources in `Scripts/BenchmarkingCode/`).
 
 ---
 

@@ -11,23 +11,59 @@ CXX = g++
 #   -static-libstdc++  static-link libstdc++ (Linux clusters)
 OMPFLAGS = -O3 -march=native -flto -std=c++17 -fopenmp -IInclude -static-libstdc++
 
-# Sources: entry point + every .cpp under Lib/ (main solver only)
-SRC = Src/Main.cpp \
-      $(shell find Lib -name '*.cpp')
+# Shared sources (everything under Lib/ except the main Solver.cpp)
+COMMON_SRC = Src/Main.cpp \
+             Lib/Bucket_Partitioned_MDS/CVRP.cpp \
+             Lib/Bucket_Partitioned_MDS/Solution.cpp \
+             Lib/Command_Line_Args.cpp \
+             Lib/Initializer.cpp \
+             $(shell find Lib/Utils -name '*.cpp')
 
-# Output binary
+# Main solver (default)
 TARGET = Bin/bucket-partitioned-MDS
 
-# Default: build the solver
+# Benchmarking / ablation binaries
+TARGET_SET = Bin/bucket-partitioned-MDS-set
+TARGET_DFS = Bin/bucket-partitioned-MDS-dfs
+TARGET_BFS = Bin/bucket-partitioned-MDS-bfs
+TARGET_BKT = Bin/bucket-partitioned-MDS-buckets
+
+BENCH_TARGETS = $(TARGET) $(TARGET_SET) $(TARGET_DFS) $(TARGET_BFS) $(TARGET_BKT)
+
+# Default: main solver only
 all: $(TARGET)
 
-# Compile & link all SRC into TARGET ($^ = sources, $@ = output)
-$(TARGET): $(SRC)
+# All variants used for benchmarking
+bench-marking: $(BENCH_TARGETS)
+
+$(TARGET): $(COMMON_SRC) Lib/Bucket_Partitioned_MDS/Solver.cpp
 	@mkdir -p Bin
 	$(CXX) $(OMPFLAGS) $^ -o $@
 	@echo "Build successful: $@"
 
-# Remove the binary
+$(TARGET_SET): $(COMMON_SRC) Scripts/BenchmarkingCode/Solver_cpp_set.cpp
+	@mkdir -p Bin
+	$(CXX) $(OMPFLAGS) $^ -o $@
+	@echo "Build successful: $@"
+
+$(TARGET_DFS): $(COMMON_SRC) Scripts/BenchmarkingCode/Solver_Non_Lazy_DFS.cpp
+	@mkdir -p Bin
+	$(CXX) $(OMPFLAGS) $^ -o $@
+	@echo "Build successful: $@"
+
+$(TARGET_BFS): $(COMMON_SRC) Scripts/BenchmarkingCode/Solver_BFS.cpp
+	@mkdir -p Bin
+	$(CXX) $(OMPFLAGS) $^ -o $@
+	@echo "Build successful: $@"
+
+$(TARGET_BKT): $(COMMON_SRC) Scripts/BenchmarkingCode/Solver_buckets.cpp
+	@mkdir -p Bin
+	$(CXX) $(OMPFLAGS) $^ -o $@
+	@echo "Build successful: $@"
+
+# Remove everything in Bin/
 clean:
-	rm -f $(TARGET)
-	@echo "Cleaned build artifacts."
+	rm -rf Bin/*
+	@echo "Cleaned Bin/"
+
+.PHONY: all bench-marking clean

@@ -5,7 +5,7 @@
 #include <random>
 #include <algorithm>
 #include <climits>
-#include <set>
+#include <fstream>
 
 namespace Bucket_Partitioned_MDS
 {
@@ -100,7 +100,6 @@ namespace Bucket_Partitioned_MDS
         return;
     }
 
-    // CPP STL Set version
     void Solver::construct_mst(
         const CVRP&                         cvrp,
         const std::vector <node_t>&         bucket,
@@ -114,72 +113,50 @@ namespace Bucket_Partitioned_MDS
         * @return: Returns nothing
         */
 
-        auto N = bucket.size();
-        if (N == 0) return;
+        // Create min heap
+        const int num_nodes = bucket.size();
+        Min_Heap min_heap(num_nodes);
 
-        const node_t INIT = -1;
-
-        // Initialize tracking arrays using the size of the bucket
-        // We use std::numeric_limits to avoid type mismatch issues with INT_MAX
-        std::vector<distance_t> key(N, std::numeric_limits<distance_t>::max());
-        std::vector<node_t> toEdges(N, INIT); 
-        std::vector<bool> visited(N, false);
-
-        // Set holds {distance, bucket_index}
-        std::set<std::pair<distance_t, node_t>> active; 
-
-        node_t src_index = 0;
-        key[src_index] = 0.0;
-        active.insert({0.0, src_index});
-
-        while (!active.empty())
+        // Starting from depot
+        const node_t depot = 0;
+        const node_t depot_index = 0;
+        node_t u = depot;
+        node_t u_index = depot_index;             
+        min_heap.DecreaseKey(Min_Heap_Node(-1, depot_index, 0));    
+        Min_Heap_Node min_node = min_heap.pop(); 
+        node_t v;
+        node_t v_index;
+        for(v_index = 1; v_index < num_nodes; v_index++) 
         {
-            // Extract the node with the minimum distance
-            auto where_index = active.begin()->second;
-            active.erase(active.begin());
-
-            // If we already finalized this node (stale pair in set), skip it
-            if (visited[where_index])
-            {
-                continue;
-            }
-            
-            visited[where_index] = true;
-
-            // Loop over all nodes in the bucket using their indices
-            for (node_t i = 0; i < N; ++i)
-            {
-                if (!visited[i])
-                {                         
-                    // Get the actual node IDs to calculate the correct distance
-                    distance_t dist = cvrp.distance(bucket[where_index], bucket[i]);
-                    
-                    if (dist < key[i])
-                    {                         
-                        key[i] = dist; 
-                        // Insert the new shorter distance. The old pair remains in the set 
-                        // but will be safely ignored later due to the visited[] check.
-                        active.insert({key[i], i});
-                        toEdges[i] = where_index;
-                    }
-                }
-            }
+            min_heap.DecreaseKey(Min_Heap_Node(u_index, v_index, cvrp.distance(bucket[u_index], bucket[v_index]))); 
         }
 
-        // Reconstruct MST into the adjacency list using bucket indices
-        for (node_t u_index = 1; u_index < N; ++u_index) 
+        // Adding edges to MST 
+        while(!min_heap.empty()) 
         { 
-            node_t v_index = toEdges[u_index];
-            if (v_index != INIT)
+            // Get the minimum weight edge 
+            min_node = min_heap.pop();
+            u_index = min_node.u; // Index of the node in the bucket
+            v_index = min_node.v; // Index of the neighbour of bucket[u_index]
+
+            // Add the edge to the graph (v_index is added to MST)
+            adj[u_index].push_back(v_index);                                
+            adj[v_index].push_back(u_index);       
+
+            // Get the corresponding vertex in entire CVRP space                                      
+            v = bucket[v_index];                                                       
+
+            // Loop over all neighbours of v_index 
+            for(node_t w_index = 0; w_index < num_nodes; w_index++) 
             {
-                adj[u_index].push_back(v_index);
-                adj[v_index].push_back(u_index);
+                node_t w = bucket[w_index];
+                min_heap.DecreaseKey(Min_Heap_Node(v_index, w_index, cvrp.distance(v, w)));
             }
         }
-        
+
         return;
     }
-    
+
     distance_t Solver::get_route_distance(
         const CVRP&                 cvrp,
         const std::vector <node_t>& route) const
@@ -575,6 +552,14 @@ namespace Bucket_Partitioned_MDS
         return;
     }
 
+    struct BucketMetrics {
+        int bucket_id;
+        double start_angle;
+        double end_angle;
+        int num_customers;
+        double execution_time;
+    };
+
     Solution Solver::solve(
         const CVRP& cvrp) const
     {
@@ -597,10 +582,13 @@ namespace Bucket_Partitioned_MDS
         std::vector <std::vector<node_t>> buckets(num_buckets);
         create_buckets(cvrp, buckets); 
 
+        std::vector<BucketMetrics> all_metrics(num_buckets);
+
         // Paritioning the problem for exploitation
         #pragma omp parallel for 
         for(int bucket_id = 0; bucket_id < num_buckets; bucket_id++) 
         {
+            auto b_start = std::chrono::high_resolution_clock::now();
             const std::vector <node_t>& bucket = buckets[bucket_id];
 
             // Useful data structures for exploitation
@@ -643,6 +631,16 @@ namespace Bucket_Partitioned_MDS
                     final_cost += low_cost;
                 }
             }
+
+            auto b_end = std::chrono::high_resolution_clock::now();
+            double b_time = std::chrono::duration<double>(b_end - b_start).count();
+            all_metrics[bucket_id] = {
+                bucket_id, 
+                bucket_id * alpha, 
+                std::min(360.0, (bucket_id + 1) * alpha), 
+                (int)buckets[bucket_id].size(), 
+                b_time
+            };
         }
 
         auto end                    = std::chrono::high_resolution_clock::now();
@@ -650,6 +648,13 @@ namespace Bucket_Partitioned_MDS
 
         double execution_time = std::chrono::duration<double>(end - start).count();
         double maxMB_difference = maxMB_after_execution - maxMB_before_execution;
+
+        std::ofstream outfile("bucket_metrics.csv", std::ios::app);
+        for (const auto& m : all_metrics) {
+            outfile << m.bucket_id << "," << m.start_angle << "," << m.end_angle << "," 
+                    << m.num_customers << "," << m.execution_time << "\n";
+        }
+        outfile.close();
 
         return Solution(execution_time, maxMB_difference, final_cost, final_routes);
     }
