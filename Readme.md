@@ -1,23 +1,23 @@
-<p align="center">
-  <img src="Results/2-d-partitions-refined/2-d-partitions-refined.png" alt="Angular bucket partitions from the depot" width="920"/>
-</p>
-
 <h1 align="center">BP-MDS</h1>
 <p align="center">
-  <b>Bucket-Partitioned Minimum-Degree Search</b><br/>
+  <b>Bucket-Partitioned MDS: CVRP Solver</b><br/>
   Million-scale <b>Capacitated Vehicle Routing</b> — partition the plane, conquer in parallel.
+</p>
+
+<p align="center">
+  <img src="Results/2-d-partitions-refined/2-d-partitions-refined.png" alt="Angular bucket partitions from the depot" width="920"/>
 </p>
 
 <p align="center">
   <img alt="C++17" src="https://img.shields.io/badge/C%2B%2B-17-00599C?style=for-the-badge&logo=cplusplus&logoColor=white"/>
   <img alt="OpenMP" src="https://img.shields.io/badge/Parallel-OpenMP-e6522c?style=for-the-badge"/>
-  <img alt="Scale" src="https://img.shields.io/badge/Scale-10%E2%81%B6%2B%20customers-111111?style=for-the-badge"/>
+  <img alt="Scale" src="https://img.shields.io/badge/Scale-10%E2%81%B6%2B%20customers-2ea44f?style=for-the-badge"/>
   <img alt="Linux" src="https://img.shields.io/badge/Primary-Linux%20cluster-FCC624?style=for-the-badge&logo=linux&logoColor=black"/>
 </p>
 
 <p align="center">
   <a href="#how-it-flows">Flow</a> ·
-  <a href="#routes-at-a-glance">Routes</a> ·
+  <a href="#bks-routes-at-a-glance">Routes</a> ·
   <a href="#quick-start">Quick start</a> ·
   <a href="#platforms">Platforms</a> ·
   <a href="Inputs/README.md">310 instances</a> ·
@@ -61,17 +61,16 @@ flowchart LR
 
 ---
 
-## Routes at a glance
-
-Best-known route geometry on large AGS city pairs (side-by-side combined plots):
+## BKS routes at a glance (🌼 like pattern)
 
 <p align="center">
-  <img src="Results/BKSPlots/combined/BKS_Antwerp1_Antwerp2_combined.png" alt="Antwerp1 vs Antwerp2 BKS routes" width="48%"/>
-  &nbsp;
-  <img src="Results/BKSPlots/combined/BKS_Flanders1_Flanders2_combined.png" alt="Flanders1 vs Flanders2 BKS routes" width="48%"/>
+  <img src="Results/BKSPlots/combined/BKS_Antwerp1_Antwerp2_combined.png" alt="Antwerp1 vs Antwerp2 BKS routes" width="920"/>
+</p>
+<p align="center">
+  <img src="Results/BKSPlots/combined/BKS_Brussels1_Brussels2_combined.png" alt="Brussels1 vs Brussels2 BKS routes" width="920"/>
 </p>
 
-<p align="center"><sub>Antwerp · Flanders — more under <code>Results/BKSPlots/combined/</code></sub></p>
+<p align="center"><sub>Antwerp · Brussels — more under <code>Results/BKSPlots/combined/</code></sub></p>
 
 Regenerate figures:
 
