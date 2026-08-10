@@ -66,11 +66,8 @@ flowchart LR
 <p align="center">
   <img src="Results/BKSPlots/combined/BKS_Antwerp1_Antwerp2_combined.png" alt="Antwerp1 vs Antwerp2 BKS routes" width="920"/>
 </p>
-<p align="center">
-  <img src="Results/BKSPlots/combined/BKS_Brussels1_Brussels2_combined.png" alt="Brussels1 vs Brussels2 BKS routes" width="920"/>
-</p>
 
-<p align="center"><sub>Antwerp · Brussels — more under <code>Results/BKSPlots/combined/</code></sub></p>
+<p align="center"><sub>Antwerp — more under <code>Results/BKSPlots/combined/</code></sub></p>
 
 Regenerate figures:
 
