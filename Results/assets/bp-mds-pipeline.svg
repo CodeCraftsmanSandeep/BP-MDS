@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="120" viewBox="0 0 920 120" role="img" aria-label="BP-MDS pipeline flow">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1e3a5f"/>
+      <stop offset="100%" stop-color="#0f2744"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2a4a7a"/>
+      <stop offset="100%" stop-color="#1a3558"/>
+    </linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3d5a80"/>
+      <stop offset="100%" stop-color="#2c4566"/>
+    </linearGradient>
+    <linearGradient id="g4" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#5c4d7a"/>
+      <stop offset="100%" stop-color="#3f3560"/>
+    </linearGradient>
+    <linearGradient id="g5" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#c44536"/>
+      <stop offset="100%" stop-color="#a33228"/>
+    </linearGradient>
+  </defs>
+
+  <!-- arrows -->
+  <path d="M118 60 H132" stroke="#8b9bb4" stroke-width="2" marker-end="url(#arr)"/>
+  <path d="M262 60 H276" stroke="#8b9bb4" stroke-width="2"/>
+  <path d="M406 60 H420" stroke="#8b9bb4" stroke-width="2"/>
+  <path d="M550 60 H564" stroke="#8b9bb4" stroke-width="2"/>
+  <path d="M694 60 H708" stroke="#8b9bb4" stroke-width="2"/>
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#8b9bb4"/>
+    </marker>
+  </defs>
+  <!-- draw arrow heads simply -->
+  <polygon points="128,54 138,60 128,66" fill="#8b9bb4"/>
+  <polygon points="272,54 282,60 272,66" fill="#8b9bb4"/>
+  <polygon points="416,54 426,60 416,66" fill="#8b9bb4"/>
+  <polygon points="560,54 570,60 560,66" fill="#8b9bb4"/>
+  <polygon points="704,54 714,60 704,66" fill="#8b9bb4"/>
+
+  <!-- boxes -->
+  <rect x="8" y="28" width="110" height="64" rx="10" fill="url(#g1)" stroke="#4a6fa5" stroke-width="1.5"/>
+  <text x="63" y="52" text-anchor="middle" fill="#ffffff" font-family="ui-sans-serif,system-ui,sans-serif" font-size="12" font-weight="700">.vrp</text>
+  <text x="63" y="70" text-anchor="middle" fill="#c5d4e8" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10">instance</text>
+
+  <rect x="142" y="28" width="120" height="64" rx="10" fill="url(#g2)" stroke="#5a7fb8" stroke-width="1.5"/>
+  <text x="202" y="52" text-anchor="middle" fill="#ffffff" font-family="ui-sans-serif,system-ui,sans-serif" font-size="12" font-weight="700">Parse · init</text>
+  <text x="202" y="70" text-anchor="middle" fill="#c5d4e8" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10">OpenMP</text>
+
+  <rect x="286" y="28" width="120" height="64" rx="10" fill="url(#g3)" stroke="#6a8fc0" stroke-width="1.5"/>
+  <text x="346" y="52" text-anchor="middle" fill="#ffffff" font-family="ui-sans-serif,system-ui,sans-serif" font-size="12" font-weight="700">Partition ±</text>
+  <text x="346" y="70" text-anchor="middle" fill="#c5d4e8" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10">angular buckets</text>
+
+  <rect x="430" y="28" width="120" height="64" rx="10" fill="url(#g3)" stroke="#6a8fc0" stroke-width="1.5"/>
+  <text x="490" y="52" text-anchor="middle" fill="#ffffff" font-family="ui-sans-serif,system-ui,sans-serif" font-size="12" font-weight="700">MST / bucket</text>
+  <text x="490" y="70" text-anchor="middle" fill="#c5d4e8" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10">min spanning tree</text>
+
+  <rect x="574" y="28" width="120" height="64" rx="10" fill="url(#g4)" stroke="#8a7ab0" stroke-width="1.5"/>
+  <text x="634" y="52" text-anchor="middle" fill="#ffffff" font-family="ui-sans-serif,system-ui,sans-serif" font-size="12" font-weight="700">Á × DFS</text>
+  <text x="634" y="70" text-anchor="middle" fill="#c5d4e8" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10">best routes</text>
+
+  <rect x="718" y="28" width="190" height="64" rx="10" fill="url(#g5)" stroke="#e07a6e" stroke-width="1.5"/>
+  <text x="813" y="52" text-anchor="middle" fill="#ffffff" font-family="ui-sans-serif,system-ui,sans-serif" font-size="12" font-weight="700">Merge · verify</text>
+  <text x="813" y="70" text-anchor="middle" fill="#f5d0cb" font-family="ui-sans-serif,system-ui,sans-serif" font-size="10">write .sol</text>
+</svg>

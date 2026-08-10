@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <img src="Results/2-d-partitions-refined/2-d-partitions-refined.png" alt="Angular bucket partitions from the depot" width="920"/>
+  <img src="Results/assets/2-d-partitions-refined.png" alt="Angular bucket partitions from the depot" width="920"/>
 </p>
 
 <p align="center">
@@ -41,20 +41,12 @@
 
 The code follows this pipeline end-to-end (`Src/Main.cpp` → `Lib/Bucket_Partitioned_MDS/`):
 
-```mermaid
-flowchart LR
-  A["`.vrp` instance"] --> B["Parse & init<br/>OpenMP"]
-  B --> C["Angular partition<br/>α degrees"]
-  C --> D["Per bucket<br/>construct MST"]
-  D --> E["ρ × random DFS<br/>on the MST"]
-  E --> F["Keep best routes<br/>per bucket"]
-  F --> G["Merge · verify<br/>write `.sol`"]
+<p align="center">
+  <img src="Results/assets/bp-mds-pipeline.svg" alt="BP-MDS pipeline: .vrp → parse → partition α → MST → ρ DFS → .sol" width="920"/>
+</p>
 
-  style A fill:#1a1a2e,stroke:#eee,color:#fff
-  style C fill:#16213e,stroke:#0f3460,color:#fff
-  style D fill:#0f3460,stroke:#533483,color:#fff
-  style E fill:#533483,stroke:#e94560,color:#fff
-  style G fill:#e94560,stroke:#fff,color:#fff
+```text
+  .vrp  →  Parse/init (OpenMP)  →  Partition α  →  MST/bucket  →  ρ × DFS  →  Merge · verify · .sol
 ```
 
 **In one line:** *partition → MST → diversify DFS → parallel reduce → solution.*
@@ -121,7 +113,12 @@ BP-MDS/
 ├── Src/Main.cpp                 # CLI → solve → verify → print
 ├── Include/ · Lib/              # Solver, CVRP I/O, utils, OpenMP init
 ├── Inputs/                      # Sample + catalog (CSV / README)
-├── Results/                     # Figures, experimental eval, outputs
+├── Results/
+│   ├── assets/                  # README marketing figures (pipeline, partitions)
+│   ├── BKSPlots/                # Route plots (combined / separated)
+│   ├── Output/                  # Solver .sol outputs
+│   ├── ExperimentalEvaluation/  # Ablation solver sources
+│   └── README.md                # Per-instance costs & gaps
 ├── Scripts/                     # Plots & tooling
 └── Makefile                     # → Bin/bucket-partitioned-MDS
 ```
