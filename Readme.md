@@ -8,19 +8,34 @@ The plane is partitioned into angular buckets from the depot (angle **α**). Eac
 
 ---
 
+## Platforms
+
+| Platform | Build / run | Notes |
+|:---------|:------------|:------|
+| **Linux** | Supported (recommended) | Cluster target. OpenMP + memory stats (`/proc`, `getrusage`) work as intended. |
+| **macOS** | Works for local runs | Use Homebrew GCC: `make CXX=g++-15` (Apple Clang has no `-fopenmp`). Solve/cost/routes OK; expect a harmless `/proc/self/status` warning; **MB line in `.sol` is unreliable**. |
+| **Windows** | Not supported natively | No `/proc` / Unix `getrusage` as used here; Makefile is Unix/GCC-oriented. Use **WSL** (Ubuntu) and follow the Linux instructions. |
+
+---
+
 ## Quick start
 
-**Needs:** C++17 compiler with OpenMP.
+**Needs:** C++17 + OpenMP.
 
 ```bash
+# Build (macOS: make CXX=g++-15)
 make
 
+# Run on the tiny sample instance
+mkdir -p Results/Output/Sample
 ./Bin/bucket-partitioned-MDS \
   --alpha=30 \
   --rho=100 \
   --input=Inputs/Sample/toy.vrp \
-  --output=solution.sol
+  --output=Results/Output/Sample/toy.sol
 ```
+
+Solution is written to `Results/Output/Sample/toy.sol` (cost + routes).
 
 | Flag | Meaning |
 |:-----|:--------|
@@ -73,13 +88,15 @@ For manual / advanced usage, see [`Scripts/BKSPlotsGenerator/`](Scripts/BKSPlots
 
 ---
 
-## Build targets
+## Build
 
-| Binary | Role |
-|:-------|:-----|
-| `Bin/bucket-partitioned-MDS` | Main solver (custom min-heap + lazy DFS) |
-| `Bin/bucket-partitioned-MDS-set` | Baseline using `std::set` for MST |
-| `Bin/bucket-partitioned-MDS-dfs` | Non-lazy DFS variant |
+```bash
+make              # Linux
+make CXX=g++-15   # macOS (Homebrew GCC; Apple clang lacks -fopenmp)
+# → Bin/bucket-partitioned-MDS
+```
+
+Ablation / benchmarking solvers (`-set`, `-dfs`, BFS, buckets) live under `Results/ExperimentalEvaluation/Code/` and are built from **BPMDS_Scripts**, not this Makefile.
 
 ---
 

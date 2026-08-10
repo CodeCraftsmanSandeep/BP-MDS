@@ -1,41 +1,33 @@
+# Compiler (override on macOS: make CXX=g++-15)
 CXX = g++
-# Using 'native' since compilation happens directly on the compute node
+
+# Build flags:
+#   -O3              speed optimizations
+#   -march=native    use this machine's CPU features
+#   -flto            link-time optimization
+#   -std=c++17       C++17
+#   -fopenmp         OpenMP parallelism
+#   -IInclude        look for headers in Include/
+#   -static-libstdc++  static-link libstdc++ (Linux clusters)
 OMPFLAGS = -O3 -march=native -flto -std=c++17 -fopenmp -IInclude -static-libstdc++
 
-# All common source files EXCEPT the Solvers
-COMMON_SRC = Src/Main.cpp \
-             Lib/Bucket_Partitioned_MDS/CVRP.cpp \
-             Lib/Bucket_Partitioned_MDS/Solution.cpp \
-             Lib/Command_Line_Args.cpp \
-             Lib/Initializer.cpp \
-             $(shell find Lib/Utils -name '*.cpp')
+# Sources: entry point + every .cpp under Lib/ (main solver only)
+SRC = Src/Main.cpp \
+      $(shell find Lib -name '*.cpp')
 
-# Define the 3 target executables
-TARGET_NORMAL = Bin/bucket-partitioned-MDS
-TARGET_SET    = Bin/bucket-partitioned-MDS-set
-TARGET_DFS    = Bin/bucket-partitioned-MDS-dfs
+# Output binary
+TARGET = Bin/bucket-partitioned-MDS
 
-# Build all 3 by default
-all: $(TARGET_NORMAL) $(TARGET_SET) $(TARGET_DFS)
+# Default: build the solver
+all: $(TARGET)
 
-# Compile Rule: Custom MinHeap + Lazy DFS (Original)
-$(TARGET_NORMAL): $(COMMON_SRC) Lib/Bucket_Partitioned_MDS/Solver.cpp
+# Compile & link all SRC into TARGET ($^ = sources, $@ = output)
+$(TARGET): $(SRC)
 	@mkdir -p Bin
 	$(CXX) $(OMPFLAGS) $^ -o $@
 	@echo "Build successful: $@"
 
-# Compile Rule: CPP Set (From new directory)
-$(TARGET_SET): $(COMMON_SRC) Benchmarking_Code/Solver_cpp_set.cpp
-	@mkdir -p Bin
-	$(CXX) $(OMPFLAGS) $^ -o $@
-	@echo "Build successful: $@"
-
-# Compile Rule: Non-Lazy DFS (From new directory)
-$(TARGET_DFS): $(COMMON_SRC) Benchmarking_Code/Solver_Non_Lazy_DFS.cpp
-	@mkdir -p Bin
-	$(CXX) $(OMPFLAGS) $^ -o $@
-	@echo "Build successful: $@"
-
+# Remove the binary
 clean:
-	rm -f $(TARGET_NORMAL) $(TARGET_SET) $(TARGET_DFS)
+	rm -f $(TARGET)
 	@echo "Cleaned build artifacts."
