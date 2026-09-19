@@ -1,0 +1,80 @@
+For each bucket generated during the partitioning phase (Section~\ref{subsec:create_buckets}), we construct an MST over the corresponding subset of nodes. The MST is constructed using a variant of Prim’s algorithm, adapted to operate efficiently on the bucketed representation of the CVRP instance (Algorithm~\ref{alg:construct-mst}). Table~\ref{table:heap-operations} summarizes the min-heap operations used by Algorithms~\ref{alg:extract-relax} and~\ref{alg:construct-mst} for MST construction. The MST and the associated min-heap are constructed over the indices of vertices within a bucket, rather than their original CVRP node identifiers. This design enables the independent construction of an MST for each bucket, facilitating parallel execution in subsequent stages of the BP-MDS algorithm, where threads operate on these per-bucket MSTs without interference. Accordingly, variables such as $u\_index$, $v\_index$, and $depot\_index$ denote the positions of vertices $u$, $v$, and the $depot$ within the bucket. Algorithm~\ref{alg:extract-relax} extracts the minimum-weight edge from the min-heap and explores all neighbors of $v$ within the bucket. It then performs \textsc{DecreaseKey} operations to update the candidate edges, thereby maintaining the minimum-cost connections between vertices already in the MST and those not yet included. 
+
+\begin{table}[htbp]
+\centering
+\caption{Min-Heap Operations used for MST Construction}
+\label{table:heap-operations}
+\begin{tabular}{l p{5cm}}
+\toprule % Top thick line
+\textbf{Operation} & \textbf{Description} \\
+\midrule 
+
+\textsc{Initialize}$(n)$ & Initializes a min-heap of capacity $n$ storing edges $(u, v, w)$, where $u, v$ are endpoints and $w$ is the weight. \\
+
+\addlinespace 
+
+\textsc{DecreaseKey}$(u, v, w)$ 
+& Updates the key of vertex $v$ if the edge $(u, v)$ with weight $w$ provides a lower-cost connection. \\
+
+\addlinespace
+
+\textsc{Pop}$()$ 
+& Removes and returns the element with the minimum weight. \\
+\bottomrule % Bottom thick line
+\end{tabular}
+\end{table}
+
+In Algorithm~\ref{alg:construct-mst}, the key of the depot in the min-heap is set to $0$ (Line~\ref{alg:construct-mst:line4}), while all other vertices are assigned a key of $\infty$. Consequently, the depot is extracted first (in Line~\ref{alg:construct-mst:line5}) and it serves as the starting point for MST construction. At each iteration (Lines~\ref{alg:construct-mst:line6}--\ref{alg:construct-mst:line10}), the algorithm extracts the minimum-weight edge $(u\_index, v\_index)$ from the heap, where $v\_index$ corresponds to a vertex not yet included in the MST. The edges incident to $v\_index$ are relaxed, updating the candidate connections. The selected edge is subsequently added to the MST by updating the adjacency list (Lines~\ref{alg:construct-mst:line8}--\ref{alg:construct-mst:line9}). This process continues until all vertices in the bucket are incorporated into the MST.
+
+\begin{algorithm}[t]
+\caption{\textsc{Extract\_Min\_And\_Relax\_Edges}}
+\label{alg:extract-relax}
+\SetAlgoLined
+\SetEndCharOfAlgoLine{}
+
+\KwIn{MinHeap $H$, CVRP instance $CVRP$, vertex list $bucket$}
+\KwOut{Indices $(u\_index, v\_index)$ corresponding to extracted edge}
+
+$(u\_index,\ v\_index,\ weight) \gets H.\textsc{Pop}()$\;     \label{alg:extract-relax:line1}
+$v \gets bucket[v\_index]$\;                                  \label{alg:extract-relax:line2}
+
+\tcp{Relax edges from $v\_index$ to all remaining vertices in bucket}
+\For{$w\_index \gets 0$ \KwTo $|bucket| - 1$}{                 \label{alg:extract-relax:line3}
+    $w \gets bucket[w\_index]$\;                              \label{alg:extract-relax:line4}
+    $H.\textsc{DecreaseKey}(v\_index,w\_index,CVRP.distance(v,\ w))$\;\label{alg:extract-relax:line5}
+}
+
+\Return{$(u\_index,\ v\_index)$}\;                             \label{alg:extract-relax:line6}
+
+\end{algorithm}
+
+\begin{algorithm}[t]
+\caption{\textsc{Construct\_MST}}
+\label{alg:construct-mst}
+\SetAlgoLined
+\SetEndCharOfAlgoLine{}
+
+\KwIn{CVRP instance $CVRP$, vertex bucket $bucket$}
+\KwOut{Adjacency list $T$ representing an MST over $bucket$}
+
+$depot\_index \gets 0$\;                                                                        \label{alg:construct-mst:line1}
+$T \gets$ adjacency list initialized with $|bucket|$ empty lists\;                              \label{alg:construct-mst:line2}
+MinHeap $H.\textsc{Initialize}(|bucket|)$\;                                                     \label{alg:construct-mst:line3}
+
+\tcp{Initialize Prim's algorithm from depot}
+$H.\textsc{DecreaseKey}(NULL,\ depot\_index,\ 0)$\;                                             \label{alg:construct-mst:line4}
+$\textsc{Extract\_Min\_And\_Relax\_Edges}(H,\ CVRP,\ bucket)$\;     \label{alg:construct-mst:line5}
+
+\tcp{Iteratively grow the MST}
+\While{$H$ not empty}{                                                                          \label{alg:construct-mst:line6}
+
+    $(u\_index,\ v\_index) \gets \textsc{Extract\_Min\_And\_Relax\_Edges}(H,\ CVRP,\ bucket)$\; \label{alg:construct-mst:line7}
+
+    \tcp{Add edge to MST}
+    $T[u\_index].push\_back(v\_index)$\;                                                         \label{alg:construct-mst:line8}
+    $T[v\_index].push\_back(u\_index)$\;                                                         \label{alg:construct-mst:line9}
+}                                                                                                \label{alg:construct-mst:line10}
+
+\Return{$T$}\;                                                                                   \label{alg:construct-mst:line11}
+
+\end{algorithm}

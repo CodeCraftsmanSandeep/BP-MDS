@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BP-MDS — High-level overview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,500&family=IBM+Plex+Mono:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --navy: #0f2744;
+      --navy-2: #1e3a5f;
+      --cyan: #38bdf8;
+      --paper: #f4f7fb;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --rule: #cbd5e1;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      background: #07111d;
+      color: var(--ink);
+      font-family: "Source Sans 3", system-ui, sans-serif;
+      overflow: hidden;
+    }
+
+    .viewport {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .stage {
+      width: 1920px;
+      height: 1080px;
+      flex-shrink: 0;
+      position: relative;
+      background: var(--paper);
+      overflow: hidden;
+      transform-origin: center center;
+    }
+
+    .slides {
+      height: 100%;
+      display: flex;
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .slide {
+      position: relative;
+      flex: 0 0 1920px;
+      width: 1920px;
+      height: 1080px;
+      padding: 56px 80px 88px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      overflow: hidden;
+    }
+
+    .kicker {
+      font-size: 18px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #0369a1;
+      font-weight: 600;
+      margin-bottom: 14px;
+    }
+
+    h1, h2 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.08;
+    }
+    h1 { font-size: 88px; color: #fff; }
+    h2 { font-size: 44px; }
+
+    .lede {
+      margin-top: 12px;
+      max-width: 1480px;
+      font-size: 22px;
+      line-height: 1.4;
+      color: var(--muted);
+    }
+
+    .hero {
+      padding: 0;
+      justify-content: stretch;
+      color: #f8fafc;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: #0f2744 right center / cover no-repeat;
+    }
+    .hero-bg::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(105deg, rgba(7,14,26,.93) 0%, rgba(7,14,26,.78) 42%, rgba(7,14,26,.45) 100%);
+    }
+    .hero-copy {
+      position: relative;
+      z-index: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 52px 80px 100px;
+    }
+    .hero-top {
+      display: flex;
+      justify-content: flex-start;
+      align-items: baseline;
+      gap: 16px;
+      font-size: 15px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      font-weight: 600;
+    }
+    .hero-top span { color: #94a3b8; letter-spacing: 0.14em; }
+    .hero-top span::before {
+      content: "·";
+      margin-right: 16px;
+      color: #64748b;
+    }
+    .hero h1 {
+      font-size: 128px;
+      line-height: 0.92;
+    }
+    .hero .tag {
+      margin-top: 18px;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 36px;
+      font-style: italic;
+      font-weight: 500;
+      color: #e2e8f0;
+      max-width: 920px;
+      line-height: 1.25;
+    }
+    .hero .lede {
+      margin-top: 22px;
+      font-size: 22px;
+      color: #94a3b8;
+      max-width: 780px;
+    }
+    .rule { width: 64px; height: 3px; background: var(--cyan); margin: 28px 0 0; }
+
+    .authors {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: auto;
+      max-width: 560px;
+      border-top: 1px solid rgba(148, 163, 184, 0.32);
+      padding-top: 22px;
+    }
+    .author {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 8px 12px;
+      min-height: 0;
+      padding: 0;
+      border: 0;
+    }
+    .author b, .author a {
+      display: inline;
+      font-size: 17px;
+      color: #fff;
+      font-weight: 600;
+      line-height: 1.3;
+      text-decoration: none;
+      min-height: 0;
+    }
+    .author a {
+      color: #7dd3fc;
+      width: fit-content;
+      border-bottom: 1px solid rgba(125, 211, 252, 0.5);
+    }
+    .author a:hover { border-bottom-color: #38bdf8; color: #fff; }
+    .author span {
+      display: inline;
+      margin-top: 0;
+      font-size: 15px;
+      color: #94a3b8;
+      line-height: 1.35;
+    }
+    .author .role {
+      margin-top: 0;
+      padding-top: 0;
+      font-size: 12px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      min-height: 0;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      align-items: start;
+      flex: 1;
+      min-height: 0;
+    }
+    .split-3 { grid-template-columns: 1.05fr 0.95fr; }
+
+    .def {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 28px;
+    }
+    .def li {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 12px;
+      font-size: 24px;
+      line-height: 1.4;
+      color: var(--ink);
+    }
+    .def .n { color: #0369a1; font-family: "Cormorant Garamond", Georgia, serif; font-size: 24px; }
+    .note {
+      margin-top: 28px;
+      padding-top: 18px;
+      border-top: 1px solid var(--rule);
+      font-size: 22px;
+      color: var(--muted);
+      max-width: 920px;
+    }
+
+    .toy {
+      background: #fff;
+      border: 1px solid var(--rule);
+      padding: 20px 24px 12px;
+    }
+    .toy svg { width: 100%; height: 520px; display: block; }
+    .caption { text-align: center; font-size: 16px; color: var(--muted); margin-top: 8px; letter-spacing: .03em; }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 20px;
+      background: #fff;
+      margin-top: 16px;
+    }
+    .table th, .table td {
+      text-align: left;
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--rule);
+    }
+    .table th { font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+    .formula {
+      margin-top: 16px;
+      padding: 14px 20px;
+      background: #0f2744;
+      color: #e2e8f0;
+      font-size: 22px;
+    }
+    .formula span { color: var(--cyan); }
+
+    .algo {
+      margin-top: 18px;
+      background: #fff;
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 17px;
+      line-height: 1.38;
+      color: var(--ink);
+      border-top: 2.5px solid var(--navy);
+      border-bottom: 2.5px solid var(--navy);
+    }
+    .algo .cap {
+      padding: 8px 4px 7px;
+      border-bottom: 1.5px solid var(--navy);
+      font-family: "Source Sans 3", sans-serif;
+      font-size: 20px;
+      font-weight: 650;
+    }
+    .algo .cap em {
+      font-style: normal;
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-weight: 600;
+    }
+    .algo .io {
+      padding: 7px 4px;
+      border-bottom: 1px solid var(--navy);
+      font-size: 15px;
+    }
+    .algo .io b { font-family: "Source Sans 3", sans-serif; font-size: 14px; }
+    .algo .body { padding: 8px 0 10px; }
+    .algo .row {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      align-items: start;
+    }
+    .algo .ln { color: #64748b; font-size: 13px; padding-top: 1px; }
+    .algo .cmt {
+      color: #1d4ed8;
+      font-style: italic;
+      font-family: "Source Sans 3", sans-serif;
+      font-size: 16px;
+      padding: 3px 0 3px 52px;
+    }
+    .algo .kw { font-weight: 600; }
+    .algo .fn { font-variant: small-caps; font-weight: 600; letter-spacing: .02em; }
+    .algo .block {
+      margin-left: 20px;
+      padding-left: 14px;
+      border-left: 1.5px solid var(--navy);
+    }
+    .algo .block .row { grid-template-columns: 48px 1fr; }
+    .algo .block .cmt { padding-left: 48px; }
+
+    .cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 28px;
+    }
+    .card {
+      background: #fff;
+      border: 1px solid var(--rule);
+      padding: 22px 24px;
+    }
+    .card h3 { font-size: 22px; margin-bottom: 8px; }
+    .card p { font-size: 20px; color: var(--muted); line-height: 1.45; }
+
+    .steps { list-style: none; margin-top: 28px; display: flex; flex-direction: column; gap: 18px; }
+    .steps li { display: grid; grid-template-columns: 48px 1fr; gap: 14px; }
+    .steps .n { font-family: "Cormorant Garamond", Georgia, serif; font-size: 28px; color: #0369a1; }
+    .steps strong { display: block; font-size: 24px; }
+    .steps span { display: block; margin-top: 4px; color: var(--muted); font-size: 20px; line-height: 1.4; }
+
+    .solve {
+      padding: 0 0 72px;
+      display: grid;
+      grid-template-columns: 25% 75%;
+      background: #0f2744;
+    }
+    .solve-fig {
+      position: relative;
+      min-width: 0;
+      min-height: 0;
+      background: #eef3f8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .solve-photo {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+    }
+    .solve-panel {
+      position: relative;
+      z-index: 2;
+      width: auto;
+      height: 100%;
+      margin: 0;
+      padding: 44px 28px 24px;
+      background: #0f2744;
+      color: #f8fafc;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .solve-panel .kicker { color: var(--cyan); }
+    .solve-panel h2 { color: #fff; font-size: 34px; line-height: 1.12; }
+    .solve-panel .lede { color: #cbd5e1; max-width: none; font-size: 17px; line-height: 1.4; }
+    .solve-panel .steps { margin-top: 18px; gap: 14px; }
+    .solve-panel .steps li { grid-template-columns: 36px 1fr; gap: 8px; }
+    .solve-panel .steps .n { color: var(--cyan); font-size: 22px; }
+    .solve-panel .steps strong { color: #fff; font-size: 18px; }
+    .solve-panel .steps span { color: #94a3b8; font-size: 15px; line-height: 1.35; }
+    .solve-panel .steps li {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    .solve.entered .steps li {
+      animation: solveStep .5s ease both;
+    }
+    .solve.entered .steps li:nth-child(1) { animation-delay: .28s; }
+    .solve.entered .steps li:nth-child(2) { animation-delay: .78s; }
+    .solve.entered .steps li:nth-child(3) { animation-delay: 1.28s; }
+    @keyframes solveStep {
+      from { opacity: 0; transform: translateY(14px); }
+      to { opacity: 1; transform: none; }
+    }
+    .solve-min {
+      position: absolute;
+      top: 14px;
+      right: 12px;
+      width: 32px;
+      height: 32px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: transparent;
+      color: #e2e8f0;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+    }
+    .solve-min svg { width: 16px; height: 16px; }
+    .solve-peek {
+      position: absolute;
+      z-index: 3;
+      left: 16px;
+      top: 16px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid rgba(15, 39, 68, .25);
+      background: rgba(15, 39, 68, 0.9);
+      color: #fff;
+      padding: 10px 16px;
+      font-size: 15px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .solve.minimized {
+      grid-template-columns: 0 1fr;
+    }
+    .solve.minimized .solve-panel {
+      overflow: hidden;
+      padding: 0;
+      pointer-events: none;
+    }
+    .solve.minimized .solve-peek { display: flex; }
+    body.pdf-capture .solve-panel .steps li {
+      opacity: 1 !important;
+      animation: none !important;
+      transform: none !important;
+    }
+    body.pdf-capture .solve.minimized {
+      grid-template-columns: 25% 75%;
+    }
+    body.pdf-capture .solve.minimized .solve-panel {
+      padding: 44px 28px 24px;
+      pointer-events: auto;
+    }
+    body.pdf-capture .solve-peek { display: none !important; }
+    figure.pic img { display: block; width: 100%; height: 480px; object-fit: contain; }
+    figcaption { text-align: center; margin-top: 8px; font-size: 16px; color: var(--muted); }
+
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 28px; }
+    .stat { background: #fff; border: 1px solid var(--rule); padding: 22px 20px; }
+    .stat b { display: block; font-family: "Cormorant Garamond", Georgia, serif; font-size: 42px; line-height: 1; }
+    .stat em { display: block; margin-top: 8px; font-style: normal; font-size: 16px; color: var(--muted); }
+
+    .ghost {
+      margin-top: 24px;
+      border: 1px solid #93c5fd;
+      background: #eff6ff;
+      color: #0f2744;
+      padding: 12px 18px;
+      font-size: 20px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      align-self: start;
+    }
+
+    .slide-view { padding: 0; background: #fff; justify-content: stretch; }
+    .view-shell { height: 100%; }
+    .view-frame { width: 100%; height: 100%; border: 0; background: #fff; }
+    .view-fallback { display: none; height: 100%; background: #0f2744 center / cover no-repeat; }
+
+    .inspect {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 30;
+      background: #fff;
+    }
+    body.inspect-open .inspect { display: block; }
+
+    .nav {
+      position: absolute;
+      left: 0; right: 0; bottom: 0;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px;
+      z-index: 5;
+    }
+    .arrows { display: flex; gap: 8px; margin-left: auto; }
+    button.icon {
+      width: 44px; height: 44px;
+      border: 1px solid var(--rule);
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+    }
+    button.icon:disabled { opacity: .35; cursor: default; }
+    button.icon svg { width: 18px; height: 18px; }
+    .pager {
+      font-variant-numeric: tabular-nums;
+      font-size: 16px;
+      letter-spacing: .16em;
+      color: var(--muted);
+    }
+    .progress {
+      position: absolute; top: 0; left: 0; height: 3px;
+      background: var(--cyan); z-index: 6;
+      transition: width .4s ease;
+    }
+    .hint {
+      position: absolute; right: 28px; top: 16px;
+      font-size: 14px; letter-spacing: .08em; color: var(--muted); z-index: 5;
+    }
+
+    body.on-view .hint,
+    body.on-view .pager,
+    body.on-view .progress { display: none !important; }
+
+    .view-switch {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 6px 8px;
+      background: rgba(15, 39, 68, 0.94);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+    }
+    .view-switch button {
+      border: 1px solid rgba(255,255,255,0.22);
+      background: transparent;
+      color: #e2e8f0;
+      padding: 8px 14px;
+      font-size: 15px;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+    }
+    .view-switch button.on,
+    .view-switch button:hover {
+      background: var(--cyan);
+      color: #0f2744;
+      border-color: var(--cyan);
+    }
+    body.pdf-capture .view-switch { display: none; }
+
+    #pdf-busy {
+      display: none;
+      position: fixed; inset: 0; z-index: 40;
+      background: rgba(15,39,68,.55);
+      color: #fff; letter-spacing: .14em; text-transform: uppercase;
+      align-items: center; justify-content: center;
+    }
+    body.pdf-capture .progress, body.pdf-capture .hint, body.pdf-capture .nav { display: none !important; }
+    body.pdf-capture #pdf-busy { display: flex; }
+    body.pdf-capture .view-frame { display: none; }
+    body.pdf-capture .view-fallback { display: block; }
+  </style>
+  <script src="vendor/html2canvas.min.js"></script>
+  <script src="vendor/jspdf.umd.min.js"></script>
+  <script src="vendor/images.js"></script>
+</head>
+<body>
+  <div class="viewport" id="viewport">
+    <div class="stage" id="stage">
+      <div class="progress" id="progress"></div>
+      <div class="hint">← →  ·  F fullscreen  ·  P pdf</div>
+
+      <div class="slides" id="slides">
+        <section class="slide hero" aria-label="High-level overview">
+          <div class="hero-bg" style="background-image: url('assets/brussels1.png')"></div>
+          <div class="hero-copy">
+            <div class="hero-top">
+              High-level overview
+              <span>IIT Madras · ICPP 2026</span>
+            </div>
+            <div>
+              <h1>BP-MDS</h1>
+              <p class="tag">Million-scale approximate CVRP in minutes — parallel divide-and-conquer.</p>
+              <div class="rule"></div>
+              <p class="lede">
+                Angular buckets around the depot. MST and randomized DFS on each core.
+                Five million customers in eight minutes.
+              </p>
+            </div>
+            <div class="authors">
+              <div class="author">
+                <a href="https://github.com/CodeCraftsmanSandeep" target="_blank" rel="noopener noreferrer">Chekkala Sandeep Reddy</a>
+                <span>IIT Madras</span>
+                <div class="role">Primary contact</div>
+              </div>
+              <div class="author">
+                <b>Lakshya Rani P</b>
+                <span>IIT Madras</span>
+              </div>
+              <div class="author">
+                <b>Somesh Singh</b>
+                <span>Siemens EDA, France</span>
+              </div>
+              <div class="author">
+                <b>Rajesh Pandian Muniasamy</b>
+                <span>Qualcomm, Bangalore</span>
+              </div>
+              <div class="author">
+                <b>Rupesh Nasre</b>
+                <span>IIT Madras</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide" aria-label="CVRP instances motivation">
+          <p class="kicker">The problem</p>
+          <h2>CVRP, the instances we run, why now.</h2>
+          <div class="split" style="grid-template-columns: 0.9fr 1.1fr; margin-top:18px;">
+            <div>
+              <h3 style="font-size:22px; margin-bottom:10px;">What is CVRP?</h3>
+              <p class="lede" style="margin:0; color:var(--ink); font-size:21px;">
+                Vehicles of capacity <b>Q</b> leave a depot, visit each customer once, return.
+                Minimize Euclidean distance. NP-hard. Exact methods do not reach city scale.
+              </p>
+              <h3 style="font-size:22px; margin:22px 0 10px;">Motivation</h3>
+              <p class="lede" style="margin:0; color:var(--ink); font-size:21px;">
+                Keep what works — MST + randomized DFS (ParMDS), 2-opt refine — and
+                <b>engineer it for many cores</b>: angular split, implicit edges, custom heap.
+                Million-customer logistics is the target, not another 200-node toy.
+              </p>
+            </div>
+            <div>
+              <table class="table" style="margin-top:0;">
+                <thead>
+                  <tr><th>Set</th><th>#</th><th>What</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><b>CVRPLIB</b></td><td>130</td><td>X (100), Golden 9–20, AGS cities, CMT5, E, F, P, tai</td></tr>
+                  <tr><td><b>FILO2</b></td><td>20</td><td>Italian regions, ~20k – 1M customers</td></tr>
+                  <tr><td><b>Synthetic XML</b></td><td>160</td><td>Uchoa generator, 10 – 5×10<sup>6</sup></td></tr>
+                  <tr><td><b>Total</b></td><td>310</td><td>Capacity-only EUC_2D</td></tr>
+                </tbody>
+              </table>
+              <p class="lede" style="margin-top:14px; font-size:18px;">
+                Size bins by customer count: <b>XS</b> 1–100 · <b>S</b> 101–10³ · <b>M</b> to 10⁴ · <b>L</b> to 5×10⁴ · <b>XL</b> to 10⁵ · <b>XXL</b> to 10⁶ · <b>XXXL</b> to 10⁷.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="slide slide-view" aria-label="Live routes">
+          <div class="view-switch" id="view-picks-nav"></div>
+          <div class="view-shell">
+            <iframe class="view-frame" id="view-frame" title="BKS route plot"></iframe>
+            <div class="view-fallback" style="background-image: url('assets/brussels1.png')"></div>
+          </div>
+        </section>
+
+        <section class="slide solve" id="solve-slide" aria-label="How BP-MDS solves">
+          <div class="solve-panel" id="solve-panel">
+            <button class="solve-min" id="solve-min" type="button" aria-label="Hide explanation">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 12h14"/></svg>
+            </button>
+            <p class="kicker">How it solves</p>
+            <h2>α-buckets from the depot</h2>
+            <p class="lede" style="margin-top:12px;">
+              Split customers into angular cones of width <b style="color:#fff;">α</b>.
+              Run MST + ρ randomized DFS on each cone, in parallel, then 2-opt and merge.
+            </p>
+            <ol class="steps">
+              <li>
+                <span class="n">01</span>
+                <div><strong>Partition</strong><span>k = ⌈360°/α⌉ buckets. Depot in every bucket. No complete graph.</span></div>
+              </li>
+              <li>
+                <span class="n">02</span>
+                <div><strong>Conquer on cores</strong><span>Nested OpenMP: buckets × ρ trials. Implicit Euclidean weights.</span></div>
+              </li>
+              <li>
+                <span class="n">03</span>
+                <div><strong>Stitch</strong><span>Refine each bucket, union routes. Feasible CVRP, minutes not days.</span></div>
+              </li>
+            </ol>
+          </div>
+          <div class="solve-fig">
+            <img class="solve-photo" data-embed="partitions" alt="Angular bucket partitions" />
+            <button class="solve-peek" id="solve-peek" type="button">Show explanation</button>
+          </div>
+        </section>
+
+        <section class="slide" aria-label="Headline results">
+          <p class="kicker">What to remember</p>
+          <h2>The numbers we actually hit.</h2>
+          <div class="stats" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="stat"><b>5×10<sup>6</sup></b><em>customers solved in 8 minutes</em></div>
+            <div class="stat"><b>2370×</b><em>faster than HGS-CVRP (multi-thread)</em></div>
+            <div class="stat"><b>100×</b><em>faster than HGS-CVRP (1 thread)</em></div>
+            <div class="stat"><b>20–60×</b><em>faster than ParMDS, which OOMs ~50k</em></div>
+            <div class="stat"><b>1.27%</b><em>geo-mean gap on 20 FILO2 cities</em></div>
+            <div class="stat"><b>8.51%</b><em>geo-mean gap wherever a BKS exists</em></div>
+          </div>
+          <p class="note" style="max-width:none;">
+            310 instances. Dual-socket Xeon Gold 6248, 40 threads, 192 GB. Code: github.com/CodeCraftsmanSandeep/BP-MDS
+          </p>
+        </section>
+      </div>
+
+      <nav class="nav" aria-label="Slide controls">
+        <span class="pager" id="pager">01 / 05</span>
+        <div class="arrows">
+          <button class="icon" id="prev" type="button" aria-label="Previous">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6 9 12l6 6"/></svg>
+          </button>
+          <button class="icon" id="next" type="button" aria-label="Next">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>
+          </button>
+          <button class="icon" id="full" type="button" aria-label="Fullscreen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H4v4M16 3h4v4M8 21H4v-4M16 21h4v-4"/></svg>
+          </button>
+          <button class="icon" id="pdf" type="button" aria-label="Export PDF">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M8 13h8M8 17h5"/></svg>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <div class="inspect" id="inspect">
+    <iframe class="view-frame" id="inspect-frame" title="Inspect BKS routes"></iframe>
+  </div>
+  <div id="pdf-busy">Exporting PDF…</div>
+
+  <script>
+    const STAGE_W = 1920, STAGE_H = 1080, LIVE = 2, SOLVE = 3, total = 5;
+    const VIEWS = [
+      { id: "brussels1", name: "Brussels 1", src: "views/BKS_Brussels1_routes.html" },
+      { id: "brussels2", name: "Brussels 2", src: "views/BKS_Brussels2_routes.html" },
+      { id: "antwerp1", name: "Antwerp 1", src: "views/BKS_Antwerp1_routes.html" },
+      { id: "flanders1", name: "Flanders 1", src: "views/BKS_Flanders1_routes.html" }
+    ];
+
+    const stage = document.getElementById("stage");
+    const slides = document.getElementById("slides");
+    const pager = document.getElementById("pager");
+    const progress = document.getElementById("progress");
+    const prev = document.getElementById("prev");
+    const next = document.getElementById("next");
+    const full = document.getElementById("full");
+    const pdfBtn = document.getElementById("pdf");
+    const viewFrame = document.getElementById("view-frame");
+    const inspectFrame = document.getElementById("inspect-frame");
+
+    let i = 0, currentView = "brussels1";
+    const solveSlide = document.getElementById("solve-slide");
+
+    function setSolveMin(on) {
+      solveSlide.classList.toggle("minimized", on);
+    }
+    document.getElementById("solve-min").addEventListener("click", (e) => {
+      e.stopPropagation();
+      setSolveMin(true);
+    });
+    document.getElementById("solve-peek").addEventListener("click", (e) => {
+      e.stopPropagation();
+      setSolveMin(false);
+    });
+
+    function fitStage() {
+      const s = Math.min(window.innerWidth / STAGE_W, window.innerHeight / STAGE_H);
+      stage.style.transform = "scale(" + s + ")";
+    }
+    window.addEventListener("resize", fitStage);
+    window.addEventListener("orientationchange", fitStage);
+    document.addEventListener("fullscreenchange", fitStage);
+    fitStage();
+
+    document.querySelectorAll("img[data-embed]").forEach((img) => {
+      const src = window.SLIDE_IMGS && window.SLIDE_IMGS[img.dataset.embed];
+      if (src) img.src = src;
+    });
+
+    function viewById(id) { return VIEWS.find((v) => v.id === id) || VIEWS[0]; }
+
+    function paintPicks(root, active) {
+      root.innerHTML = "";
+      VIEWS.forEach((v) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.textContent = v.name;
+        if (v.id === active) b.classList.add("on");
+        b.addEventListener("click", () => setView(v.id));
+        root.appendChild(b);
+      });
+    }
+
+    function setView(id) {
+      currentView = id;
+      const v = viewById(id);
+      if (viewFrame.src.indexOf(v.src) === -1) viewFrame.src = v.src;
+      inspectFrame.src = v.src;
+      paintPicks(document.getElementById("view-picks-nav"), id);
+    }
+
+    function openInspect(id) {
+      if (id) setView(id);
+      else if (!inspectFrame.src) setView(currentView);
+      document.body.classList.add("inspect-open");
+    }
+    function closeInspect() { document.body.classList.remove("inspect-open"); }
+
+    function pad(n) { return String(n).padStart(2, "0"); }
+
+    function render() {
+      slides.style.transform = "translateX(" + (-i * STAGE_W) + "px)";
+      pager.textContent = pad(i + 1) + " / " + pad(total);
+      progress.style.width = ((i + 1) / total * 100) + "%";
+      prev.disabled = i === 0;
+      next.disabled = i === total - 1;
+      document.body.classList.toggle("on-view", i === LIVE);
+      if (i === LIVE && !viewFrame.src) setView(currentView);
+      if (i === SOLVE) {
+        solveSlide.classList.remove("entered");
+        void solveSlide.offsetWidth;
+        solveSlide.classList.add("entered");
+      } else {
+        solveSlide.classList.remove("entered");
+        setSolveMin(false);
+      }
+    }
+
+    function go(d) {
+      if (document.body.classList.contains("inspect-open")) return;
+      i = Math.max(0, Math.min(total - 1, i + d));
+      render();
+    }
+
+    prev.addEventListener("click", () => go(-1));
+    next.addEventListener("click", () => go(1));
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        if (document.body.classList.contains("inspect-open")) { e.preventDefault(); closeInspect(); return; }
+        if (document.fullscreenElement) document.exitFullscreen();
+        return;
+      }
+      if (document.body.classList.contains("inspect-open")) return;
+      if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { e.preventDefault(); go(1); }
+      if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); go(-1); }
+      if (e.key === "Home") { e.preventDefault(); i = 0; render(); }
+      if (e.key === "End") { e.preventDefault(); i = total - 1; render(); }
+      if (e.key === "f" || e.key === "F") { e.preventDefault(); toggleFull(); }
+      if (e.key === "p" || e.key === "P") { e.preventDefault(); exportPdf(); }
+      if ((e.key === "m" || e.key === "M") && i === SOLVE) {
+        e.preventDefault();
+        setSolveMin(!solveSlide.classList.contains("minimized"));
+      }
+    });
+
+    function toggleFull() {
+      const root = document.documentElement;
+      if (!document.fullscreenElement) root.requestFullscreen();
+      else document.exitFullscreen();
+    }
+    full.addEventListener("click", toggleFull);
+
+    function frame() { return new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))); }
+
+    async function exportPdf() {
+      if (pdfBtn.disabled) return;
+      if (typeof html2canvas !== "function" || !window.jspdf) {
+        window.alert("PDF libraries failed to load.");
+        return;
+      }
+      closeInspect();
+      pdfBtn.disabled = true;
+      const restored = i;
+      const slideEls = [...document.querySelectorAll("#slides .slide")];
+      const busy = document.getElementById("pdf-busy");
+      const prevTransition = slides.style.transition;
+      document.body.classList.add("pdf-capture");
+      slides.style.transition = "none";
+      try {
+        if (document.fonts && document.fonts.ready) await document.fonts.ready;
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: [338.67, 190.5] });
+        const pageW = pdf.internal.pageSize.getWidth();
+        const pageH = pdf.internal.pageSize.getHeight();
+        for (let s = 0; s < total; s++) {
+          busy.textContent = "Exporting " + (s + 1) + " / " + total;
+          slideEls.forEach((el, n) => {
+            el.style.display = n === s ? "flex" : "none";
+            el.style.flex = "none";
+            el.style.width = STAGE_W + "px";
+            el.style.height = STAGE_H + "px";
+          });
+          slides.style.transform = "none";
+          await frame();
+          await new Promise((r) => setTimeout(r, 80));
+          const canvas = await html2canvas(stage, {
+            scale: 1,
+            width: STAGE_W,
+            height: STAGE_H,
+            backgroundColor: s === 0 ? "#0f2744" : "#f4f7fb",
+            logging: false,
+            useCORS: true,
+            ignoreElements: (el) => el.id === "pdf-busy" || el.id === "inspect"
+          });
+          const img = canvas.toDataURL("image/jpeg", 0.92);
+          if (s > 0) pdf.addPage();
+          pdf.addImage(img, "JPEG", 0, 0, pageW, pageH);
+        }
+        pdf.save("BP-MDS-high-level-overview.pdf");
+      } catch (err) {
+        console.error(err);
+        window.alert("PDF export failed: " + (err && err.message ? err.message : err));
+      } finally {
+        slideEls.forEach((el) => {
+          el.style.display = "";
+          el.style.flex = "";
+          el.style.width = "";
+          el.style.height = "";
+        });
+        slides.style.transition = prevTransition;
+        document.body.classList.remove("pdf-capture");
+        i = restored;
+        render();
+        pdfBtn.disabled = false;
+      }
+    }
+
+    pdfBtn.addEventListener("click", exportPdf);
+    paintPicks(document.getElementById("view-picks-nav"), currentView);
+    render();
+  </script>
+</body>
+</html>

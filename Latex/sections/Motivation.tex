@@ -1,0 +1,13 @@
+
+\subsection{Motivation}
+\label{sec:motivation}
+Our primary motivation is to solve large-scale CVRP instances with competitive accuracy and reduced execution time. To achieve this, we leverage data structure optimizations, including a custom min-heap and on-demand memory allocation, along with parallelism provided by modern multi-core architectures. Fig.~\ref{fig:BKS_Brussels} illustrates the Best Known Solution (BKS) for the Brussels instances from CVRPLIB~\cite{CVRPLIB}. A notable structural pattern can be observed in the solution: routes exhibit a flower-like arrangement, where the depot acts as the center and individual routes resemble petals radiating outward. This geometric characteristic motivates a spatial decomposition strategy. Specifically, we partition the plane into triangular regions (or equivalently, two-dimensional cones) with the depot as the common vertex. Such a partitioning enables an effective distribution of computational workload. Thus, empirically, for most large instances, the load is approximately balanced across angular sectors, where each region can be assigned to a separate thread. This insight forms the basis of the proposed BP-MDS approach, illustrated in Fig.~\ref{fig:2-d-partition}. 
+
+A key design choice in our approach is to avoid explicitly constructing the complete graph. For million-scale instances, materializing all edges is computationally prohibitive, particularly in terms of total available memory. Instead, we operate on the graph implicitly, computing edge weights on demand. This representation enables scalability without compromising the solution quality. To support efficient route construction, we explicitly maintain the Minimum Spanning Trees (MSTs), which can be stored compactly and form a core component of our CVRP framework.
+
+
+
+
+
+
+

@@ -1,0 +1,80 @@
+Algorithm~\ref{alg:get-routes-from-random-dfs} generates feasible CVRP routes from the MST via randomized DFS, using the traversal order while enforcing capacity-based splits. A stack-based DFS is used, where each element $(i, L)$ tracks the current index in a shuffled neighbor list (Line~\ref{alg:get-routes-from-random-dfs:line4}). Standard stack operations \textsc{PUSH}, \textsc{TOP}, and \textsc{POP} are employed. The traversal is initialized from the depot node, whose neighbors in the MST are randomly permuted to induce variability in the traversal order (Lines~\ref{alg:get-routes-from-random-dfs:line6}--\ref{alg:get-routes-from-random-dfs:line9}). At Line~\ref{alg:get-routes-from-random-dfs:line6}, we create a local copy of the adjacency list rather than directly shuffling the tree $T$, since $T$ is a shared data structure accessed by multiple threads. Each thread independently copies the neighbor list, performs a random permutation (Line~\ref{alg:get-routes-from-random-dfs:line7}), and then pushes the pair $(|L|-1, L)$ onto the stack (Line~\ref{alg:get-routes-from-random-dfs:line8}). This enables traversal from the end, with a simple termination condition: when the index becomes negative, all neighbors have been visited.
+
+The algorithm proceeds by iteratively exploring the MST using the stack (Line~\ref{alg:get-routes-from-random-dfs:line10}). At each step, the top stack frame is examined, and unvisited neighbors are considered in reverse order of the shuffled list. Upon encountering an unvisited vertex $v$, the algorithm first checks whether adding $v$ to the current route would violate the vehicle capacity constraint (Line~\ref{alg:get-routes-from-random-dfs:line18}). If the constraint is violated, the current route is finalized by returning to the depot, and a new route is initiated (Lines~\ref{alg:get-routes-from-random-dfs:line19}--\ref{alg:get-routes-from-random-dfs:line22}). If the capacity constraint is satisfied, the vertex $v$ is appended to the current route, and the traversal cost is updated accordingly (Lines~\ref{alg:get-routes-from-random-dfs:line24}--\ref{alg:get-routes-from-random-dfs:line27}). The vertex is then marked as visited, and its neighbors are retrieved, copied, shuffled, and pushed onto the stack to continue the DFS exploration (Lines~\ref{alg:get-routes-from-random-dfs:line28}--\ref{alg:get-routes-from-random-dfs:line31}). Once all neighbors have been visited, the vertex is popped from the stack (Line~\ref{alg:get-routes-from-random-dfs:line35}); otherwise, the next neighbor index is updated to resume exploration after backtracking to the vertex (Line~\ref{alg:get-routes-from-random-dfs:line36}). Any remaining partial route is finalized by returning to the depot (Lines~\ref{alg:get-routes-from-random-dfs:line39}--\ref{alg:get-routes-from-random-dfs:line42}). The key features of the algorithm are: (i) on-demand (lazy) memory allocation, (ii) an iterative design, and (iii) on-the-fly distance computation for route construction.
+
+
+
+\begin{algorithm}[htbp]
+\caption{\textsc{Get\_Routes\_From\_Random\_DFS}}
+\label{alg:get-routes-from-random-dfs}
+\SetAlgoLined
+\SetEndCharOfAlgoLine{}
+
+\KwIn{CVRP instance: $CVRP$, Bucket of nodes: $bucket$, MST adjacency list over $bucket$: $T$}
+\KwOut{List of routes: $routes$, Cost of routes: $cost$}
+
+$num\_nodes \gets |bucket|$, $depot\_index \gets 0$\;                                                                       \label{alg:get-routes-from-random-dfs:line1}
+
+$visited[0, \dots ,num\_nodes - 1] \gets false$\;                                                                           \label{alg:get-routes-from-random-dfs:line2}
+$routes \gets [\ ]$,  $cost \gets 0$, $curr\_route \gets [\ ]$\;                                                            \label{alg:get-routes-from-random-dfs:line3}
+
+$dfs\_stack \gets$ empty stack of $(i, L)$, where $i$ indexes into a neighbor list referenced by $L$\;                      \label{alg:get-routes-from-random-dfs:line4}
+$residue\_capacity \gets CVRP.capacity$, $prev\_node \gets CVRP.depot$\;                                                    \label{alg:get-routes-from-random-dfs:line5}
+
+\tcp{Start DFS from $depot\_index$}
+$neigh \gets$ Copy($T[depot\_index]$)\;                                                                                     \label{alg:get-routes-from-random-dfs:line6}
+\textsc{Shuffle}$(neigh)$\;                                                                                                 \label{alg:get-routes-from-random-dfs:line7}
+$dfs\_stack.\textsc{Push}((|neigh|-1,\ neigh))$\;                                                                           \label{alg:get-routes-from-random-dfs:line8}
+$visited[depot\_index] \gets true$\;                                                                                        \label{alg:get-routes-from-random-dfs:line9}
+
+\While{$dfs\_stack$ is not empty}{                                                                                          \label{alg:get-routes-from-random-dfs:line10}
+    $(index, neigh) \gets dfs\_stack.\textsc{Top}()$\;                                                                      \label{alg:get-routes-from-random-dfs:line11}
+    $push\_candidate \gets NULL$\;                                                                                          \label{alg:get-routes-from-random-dfs:line12}
+
+    \While{$index \geq 0$}{                                                                                                 \label{alg:get-routes-from-random-dfs:line13}
+        $v\_index \gets neigh[index]$\;                                                                                     \label{alg:get-routes-from-random-dfs:line14}
+        $v \gets bucket[v\_index]$\;                                                                                        \label{alg:get-routes-from-random-dfs:line15}
+        $index \gets index - 1$\;                                                                                           \label{alg:get-routes-from-random-dfs:line16}
+
+        \If{not $visited[v\_index]$}{                                                                                       \label{alg:get-routes-from-random-dfs:line17}
+
+            \tcp{Start new route if the capacity is exceeded}                             
+            \If{$residue\_capacity < CVRP[v].demand$}{                                                                      \label{alg:get-routes-from-random-dfs:line18}
+                $routes.push\_back(curr\_route)$\;                                                                          \label{alg:get-routes-from-random-dfs:line19}
+                $cost \gets cost + CVRP.distance(prev\_node, CVRP.depot)$\;                                                 \label{alg:get-routes-from-random-dfs:line20}
+                $curr\_route \gets [\ ]$\;                                                                                  \label{alg:get-routes-from-random-dfs:line21}
+                $residue\_capacity \gets CVRP.capacity$, $prev\_node \gets CVRP.depot$\;                                    \label{alg:get-routes-from-random-dfs:line22} 
+            }                                                                                                               \label{alg:get-routes-from-random-dfs:line23}
+
+            \tcp{Add $v$ to current route}
+            $curr\_route.push\_back(v)$\;                                                                                   \label{alg:get-routes-from-random-dfs:line24}
+            $cost \gets cost + CVRP.distance(prev\_node, v)$\;                                                              \label{alg:get-routes-from-random-dfs:line25}
+            $residue\_capacity \gets residue\_capacity - CVRP[v].demand$\;                                                  \label{alg:get-routes-from-random-dfs:line26}
+            $prev\_node \gets v$\;                                                                                          \label{alg:get-routes-from-random-dfs:line27}
+
+            \tcp{DFS from $v\_index$}
+            $visited[v\_index] \gets true$\;                                                                                \label{alg:get-routes-from-random-dfs:line28}
+            $neigh' \gets$ Copy($T[v\_index]$)\;                                                                            \label{alg:get-routes-from-random-dfs:line29}
+            \textsc{Shuffle}$(neigh')$\;                                                                                    \label{alg:get-routes-from-random-dfs:line30}
+            $push\_candidate \gets (|neigh'|-1,\ neigh')$\;                                                                 \label{alg:get-routes-from-random-dfs:line31}
+
+            \textbf{break}\;                                                                                                \label{alg:get-routes-from-random-dfs:line32}
+        }                                                                                                                   \label{alg:get-routes-from-random-dfs:line33}
+    }                                                                                                                       \label{alg:get-routes-from-random-dfs:line34}
+
+    \lIf{$index < 0$}{$dfs\_stack.\textsc{Pop}()$ }                                                                         \label{alg:get-routes-from-random-dfs:line35}
+    \lElse{$dfs\_stack.\textsc{Top}().first \gets index$ }                                                                  \label{alg:get-routes-from-random-dfs:line36}
+
+    \lIf{$push\_candidate \neq NULL$}{$dfs\_stack.\textsc{Push}(push\_candidate)$ }                                         \label{alg:get-routes-from-random-dfs:line37}
+}                                                                                                                           \label{alg:get-routes-from-random-dfs:line38}
+
+\tcp{Add last route}
+\If{$curr\_route \neq [\ ]$}{                                                                                               \label{alg:get-routes-from-random-dfs:line39}
+    $routes.push\_back(curr\_route)$\;                                                                                      \label{alg:get-routes-from-random-dfs:line40}
+    $cost \gets cost + CVRP.distance(prev\_node, CVRP.depot)$\;                                                             \label{alg:get-routes-from-random-dfs:line41}
+}                                                                                                                           \label{alg:get-routes-from-random-dfs:line42}
+
+\Return{$(routes,\ cost)$}\;                                                                                                \label{alg:get-routes-from-random-dfs:line43}
+
+\end{algorithm}
+
