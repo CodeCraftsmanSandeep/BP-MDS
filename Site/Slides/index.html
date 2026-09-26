@@ -27,8 +27,9 @@
     }
 
     .viewport {
-      width: 100vw;
+      width: 100%;
       height: 100vh;
+      height: 100dvh;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -103,7 +104,9 @@
       content: "";
       position: absolute;
       inset: 0;
-      background: linear-gradient(105deg, rgba(7,14,26,.93) 0%, rgba(7,14,26,.78) 42%, rgba(7,14,26,.45) 100%);
+      background:
+        linear-gradient(to top, rgba(7,14,26,.92) 0%, rgba(7,14,26,.72) 16%, rgba(7,14,26,0) 34%),
+        linear-gradient(100deg, rgba(7,14,26,.96) 0%, rgba(7,14,26,.88) 32%, rgba(7,14,26,.4) 58%, rgba(7,14,26,.16) 100%);
     }
     .hero-copy {
       position: relative;
@@ -115,25 +118,17 @@
       padding: 52px 80px 100px;
     }
     .hero-top {
-      display: flex;
-      justify-content: flex-start;
-      align-items: baseline;
-      gap: 16px;
       font-size: 15px;
-      letter-spacing: 0.2em;
+      letter-spacing: 0.28em;
       text-transform: uppercase;
       color: var(--cyan);
       font-weight: 600;
     }
-    .hero-top span { color: #94a3b8; letter-spacing: 0.14em; }
-    .hero-top span::before {
-      content: "·";
-      margin-right: 16px;
-      color: #64748b;
-    }
     .hero h1 {
-      font-size: 128px;
-      line-height: 0.92;
+      margin-top: 18px;
+      font-size: 156px;
+      line-height: 0.88;
+      letter-spacing: -0.03em;
     }
     .hero .tag {
       margin-top: 18px;
@@ -153,14 +148,53 @@
     }
     .rule { width: 64px; height: 3px; background: var(--cyan); margin: 28px 0 0; }
 
+    .hero-foot {
+      margin-top: auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: 48px;
+      align-items: end;
+      border-top: 1px solid rgba(148, 163, 184, 0.32);
+      padding-top: 22px;
+    }
+    .conf {
+      justify-self: end;
+      max-width: 560px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+      text-decoration: none;
+      text-align: right;
+    }
+    .conf-name {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 36px;
+      font-style: italic;
+      font-weight: 500;
+      line-height: 1.05;
+      color: #fff;
+      border-bottom: 1px solid rgba(125, 211, 252, 0.55);
+      padding-bottom: 4px;
+    }
+    .conf-place {
+      font-size: 15px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      font-weight: 600;
+    }
+    .conf-place::after { content: "  \2197"; letter-spacing: 0; }
+    .conf:hover .conf-name { color: #7dd3fc; border-bottom-color: #7dd3fc; }
+    .conf:hover .conf-place { color: #fff; }
     .authors {
       display: flex;
       flex-direction: column;
       gap: 8px;
-      margin-top: auto;
-      max-width: 560px;
-      border-top: 1px solid rgba(148, 163, 184, 0.32);
-      padding-top: 22px;
+      margin-top: 0;
+      max-width: 640px;
+      border-top: 0;
+      padding-top: 0;
     }
     .author {
       display: flex;
@@ -343,7 +377,7 @@
     .solve {
       padding: 0 0 72px;
       display: grid;
-      grid-template-columns: 25% 75%;
+      grid-template-columns: 34% 66%;
       background: #0f2744;
     }
     .solve-fig {
@@ -367,21 +401,51 @@
       width: auto;
       height: 100%;
       margin: 0;
-      padding: 44px 28px 24px;
+      padding: 28px 28px 24px;
       background: #0f2744;
       color: #f8fafc;
       display: flex;
       flex-direction: column;
+      justify-content: center;
       min-width: 0;
     }
     .solve-panel .kicker { color: var(--cyan); }
-    .solve-panel h2 { color: #fff; font-size: 34px; line-height: 1.12; }
-    .solve-panel .lede { color: #cbd5e1; max-width: none; font-size: 17px; line-height: 1.4; }
-    .solve-panel .steps { margin-top: 18px; gap: 14px; }
+    .solve-panel h2 { color: #fff; font-size: 40px; line-height: 1.05; }
+    .solve-panel .steps { margin-top: 16px; gap: 12px; }
     .solve-panel .steps li { grid-template-columns: 36px 1fr; gap: 8px; }
     .solve-panel .steps .n { color: var(--cyan); font-size: 22px; }
-    .solve-panel .steps strong { color: #fff; font-size: 18px; }
-    .solve-panel .steps span { color: #94a3b8; font-size: 15px; line-height: 1.35; }
+    .solve-panel .steps strong { color: #fff; font-size: 20px; }
+    .solve-panel .steps span { color: #cbd5e1; font-size: 16px; line-height: 1.3; }
+    .hits {
+      margin-top: 28px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px 20px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(148, 163, 184, 0.35);
+    }
+    .hit b {
+      display: block;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 42px;
+      font-weight: 600;
+      line-height: 0.95;
+      color: #fff;
+    }
+    .hit b sup { font-size: 0.55em; }
+    .hit span {
+      display: block;
+      margin-top: 3px;
+      font-size: 16px;
+      line-height: 1.25;
+      color: #94a3b8;
+    }
+    .solve-foot {
+      margin-top: 16px;
+      font-size: 15px;
+      letter-spacing: 0.02em;
+      color: #94a3b8;
+    }
     .solve-panel .steps li {
       opacity: 0;
       transform: translateY(14px);
@@ -443,10 +507,10 @@
       transform: none !important;
     }
     body.pdf-capture .solve.minimized {
-      grid-template-columns: 25% 75%;
+      grid-template-columns: 34% 66%;
     }
     body.pdf-capture .solve.minimized .solve-panel {
-      padding: 44px 28px 24px;
+      padding: 28px 28px 24px;
       pointer-events: auto;
     }
     body.pdf-capture .solve-peek { display: none !important; }
@@ -570,6 +634,300 @@
     body.pdf-capture #pdf-busy { display: flex; }
     body.pdf-capture .view-frame { display: none; }
     body.pdf-capture .view-fallback { display: block; }
+
+    .cvrp-panels {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+      flex: 1;
+      min-height: 0;
+    }
+    .cvrp-panel {
+      background: #fff;
+      border: 1px solid var(--rule);
+      border-top-width: 3px;
+      padding: 12px 14px 12px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      min-width: 0;
+    }
+    .cvrp-panel.in { border-top-color: var(--navy); }
+    .cvrp-panel.bad { border-top-color: #b91c1c; }
+    .cvrp-panel.good { border-top-color: #0f766e; }
+    .panel-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+    .cvrp-panel h3 { font-size: 22px; font-weight: 600; line-height: 1.2; }
+    .cvrp-panel .sub { margin-top: 2px; font-size: 16px; color: var(--muted); line-height: 1.3; }
+    .q-chip {
+      flex-shrink: 0;
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 14px;
+      color: #0369a1;
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      padding: 4px 8px;
+    }
+    .cvrp-panel svg { width: 100%; flex: 1; min-height: 0; margin-top: 6px; }
+    .cvrp-panel .cap {
+      margin-top: 6px;
+      font-size: 17px;
+      line-height: 1.35;
+      color: var(--ink);
+    }
+    .cvrp-rules {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-top: 14px;
+    }
+    .cvrp-rule { border-top: 2px solid var(--navy); padding-top: 8px; }
+    .cvrp-rule b { display: block; font-size: 18px; }
+    .cvrp-rule span {
+      display: block;
+      margin-top: 4px;
+      font-size: 16px;
+      line-height: 1.35;
+      color: var(--muted);
+    }
+
+    .mot-top {
+      display: grid;
+      grid-template-columns: 1.05fr 1.05fr 0.9fr;
+      gap: 16px;
+      margin-top: 14px;
+      flex: 1;
+      min-height: 0;
+    }
+    .mot-card {
+      background: #fff;
+      border: 1px solid var(--rule);
+      padding: 14px 16px 12px;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      min-width: 0;
+    }
+    .mot-card h3 { font-size: 22px; font-weight: 600; line-height: 1.2; }
+    .mot-card p { margin-top: 8px; font-size: 17px; line-height: 1.38; color: #334155; }
+    .mot-card svg { width: 100%; flex: 1; min-height: 180px; margin-top: 4px; }
+    .wall {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 12px;
+      flex: 1;
+    }
+    .wall-row { display: grid; grid-template-columns: 118px 1fr; gap: 10px; align-items: center; }
+    .wall-n {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 15px;
+      color: var(--navy);
+      line-height: 1.25;
+    }
+    .wall-track { height: 14px; background: #e2e8f0; }
+    .wall-fill { height: 100%; background: #1e3a5f; }
+    .wall-row.now .wall-fill { background: #0369a1; }
+    .wall-row b { display: block; margin-top: 4px; font-size: 16px; font-weight: 600; }
+    .wall-row span { display: block; font-size: 15px; color: var(--muted); line-height: 1.3; }
+    .mega-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .mega {
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      padding: 10px 12px 12px;
+    }
+    .mega.hot { background: #0f2744; border-color: #0f2744; }
+    .mega b {
+      display: block;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: 48px;
+      font-weight: 600;
+      line-height: 0.95;
+      color: var(--navy);
+    }
+    .mega.hot b { color: #fff; }
+    .mega span { display: block; margin-top: 6px; font-size: 14px; line-height: 1.3; color: var(--muted); }
+    .mega.hot span { color: #cbd5e1; }
+    .mono-line {
+      margin-top: 8px;
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 14px;
+      color: var(--navy);
+    }
+    .inst-label {
+      margin-top: 12px;
+      font-size: 13px;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: #0369a1;
+      font-weight: 600;
+    }
+
+    /* Phones, tablets, and desktop windows too small for a 16:9 stage. */
+    html.reflow,
+    html.reflow body {
+      height: auto;
+      overflow-x: hidden;
+      overflow-y: auto;
+      -webkit-text-size-adjust: 100%;
+    }
+    html.reflow .viewport {
+      display: block;
+      width: 100%;
+      height: auto;
+      overflow: visible;
+    }
+    html.reflow .stage {
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      overflow: visible;
+      background: transparent;
+      transform: none !important;
+    }
+    html.reflow .slides {
+      display: block;
+      height: auto;
+      transform: none !important;
+      transition: none;
+    }
+    html.reflow .slide {
+      width: 100%;
+      height: auto;
+      min-height: 0;
+      flex: none;
+      overflow: visible;
+      padding: 28px 20px calc(104px + env(safe-area-inset-bottom));
+      scroll-margin-top: 8px;
+    }
+    html.reflow .slide + .slide { box-shadow: inset 0 8px 0 #07111d; }
+    html.reflow h2 { font-size: clamp(30px, 7vw, 44px); }
+    html.reflow .lede { font-size: 18px; max-width: none; }
+    html.reflow .kicker { font-size: 13px; letter-spacing: 0.16em; }
+
+    html.reflow .hero { min-height: 100svh; }
+    html.reflow .hero-bg::after {
+      background: linear-gradient(180deg, rgba(7,14,26,.88) 0%, rgba(7,14,26,.84) 46%, rgba(7,14,26,.92) 100%);
+    }
+    html.reflow .hero-copy {
+      height: auto;
+      min-height: 100svh;
+      padding: 24px 22px calc(120px + env(safe-area-inset-bottom));
+    }
+    html.reflow .hero h1 { font-size: clamp(72px, 20vw, 132px); }
+    html.reflow .hero .tag { font-size: clamp(24px, 5vw, 34px); max-width: 18em; }
+    html.reflow .hero .lede { font-size: 18px; max-width: 36em; }
+    html.reflow .hero-foot { grid-template-columns: 1fr; gap: 28px; }
+    html.reflow .conf {
+      justify-self: start;
+      align-items: flex-start;
+      text-align: left;
+      max-width: 22em;
+    }
+    html.reflow .conf-name { font-size: clamp(26px, 6vw, 36px); }
+    html.reflow .authors { max-width: none; }
+
+    html.reflow .cvrp-panels,
+    html.reflow .mot-top,
+    html.reflow .cvrp-rules { grid-template-columns: 1fr; }
+    html.reflow .cvrp-panel svg { height: 280px; flex: none; }
+    html.reflow .cvrp-panel h3,
+    html.reflow .mot-card h3 { font-size: 20px; }
+    html.reflow .cvrp-panel .cap,
+    html.reflow .cvrp-rule span,
+    html.reflow .mot-card p { font-size: 17px; }
+    html.reflow .mot-card svg { height: 260px; flex: none; }
+    html.reflow .mega b { font-size: 40px; }
+    html.reflow .wall-row { grid-template-columns: 92px 1fr; }
+    html.reflow .table { font-size: 16px; }
+    html.reflow .table th,
+    html.reflow .table td { padding: 8px 10px; }
+
+    html.reflow .slide-view {
+      display: flex;
+      flex-direction: column;
+      height: 100svh;
+      min-height: 520px;
+      padding: 0 0 calc(76px + env(safe-area-inset-bottom));
+    }
+    html.reflow .view-switch {
+      position: relative;
+      top: auto;
+      left: auto;
+      transform: none;
+      width: 100%;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+    }
+    html.reflow .view-shell { flex: 1; min-height: 0; height: auto; }
+    html.reflow .view-frame { min-height: 420px; }
+
+    html.reflow .solve {
+      display: flex;
+      flex-direction: column;
+      padding: 0 0 calc(88px + env(safe-area-inset-bottom));
+      background: #0f2744;
+    }
+    html.reflow .solve-fig {
+      order: -1;
+      height: min(72vw, 520px);
+      min-height: 240px;
+    }
+    html.reflow .solve-panel {
+      height: auto;
+      padding: 28px 22px 8px;
+    }
+    html.reflow .solve-panel h2 { font-size: clamp(30px, 7vw, 40px); }
+    html.reflow .solve.minimized { display: flex; }
+    html.reflow .solve.minimized .solve-panel {
+      overflow: visible;
+      padding: 28px 22px 8px;
+      pointer-events: auto;
+    }
+    html.reflow .solve-min,
+    html.reflow .solve-peek { display: none; }
+    html.reflow .hit b { font-size: 36px; }
+    html.reflow .solve-foot { font-size: 14px; }
+
+    html.reflow .hint { display: none; }
+    html.reflow .progress { position: fixed; }
+    html.reflow .nav {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: auto;
+      min-height: 64px;
+      padding: 8px 14px calc(8px + env(safe-area-inset-bottom));
+      background: rgba(255, 255, 255, 0.96);
+      border-top: 1px solid var(--rule);
+      z-index: 20;
+    }
+    html.reflow.on-view .pager { display: inline !important; }
+    html.reflow.on-view .progress { display: block !important; }
+
+    @media (min-width: 800px) {
+      html.reflow .cvrp-rules { grid-template-columns: 1fr 1fr; }
+      html.reflow .mot-top { grid-template-columns: 1fr 1fr; }
+      html.reflow .slide { padding-left: 36px; padding-right: 36px; }
+    }
+    @media (min-width: 1040px) {
+      html.reflow .cvrp-panels { grid-template-columns: 1fr 1fr 1fr; }
+      html.reflow .mot-top { grid-template-columns: 1fr 1fr 1fr; }
+      html.reflow .cvrp-rules { grid-template-columns: 1fr 1fr 1fr 1fr; }
+      html.reflow .cvrp-panel svg { height: 240px; }
+    }
   </style>
   <script src="vendor/html2canvas.min.js"></script>
   <script src="vendor/jspdf.umd.min.js"></script>
@@ -585,19 +943,17 @@
         <section class="slide hero" aria-label="High-level overview">
           <div class="hero-bg" style="background-image: url('assets/brussels1.png')"></div>
           <div class="hero-copy">
-            <div class="hero-top">
-              High-level overview
-              <span>IIT Madras · ICPP 2026</span>
-            </div>
+            <div class="hero-top">High-level overview</div>
             <div>
               <h1>BP-MDS</h1>
-              <p class="tag">Million-scale approximate CVRP in minutes — parallel divide-and-conquer.</p>
+              <p class="tag">Million-scale approximate CVRP in minutes —<br>parallel divide-and-conquer.</p>
               <div class="rule"></div>
               <p class="lede">
                 Angular buckets around the depot. MST and randomized DFS on each core.
                 Five million customers in eight minutes.
               </p>
             </div>
+            <div class="hero-foot">
             <div class="authors">
               <div class="author">
                 <a href="https://github.com/CodeCraftsmanSandeep" target="_blank" rel="noopener noreferrer">Chekkala Sandeep Reddy</a>
@@ -621,43 +977,221 @@
                 <span>IIT Madras</span>
               </div>
             </div>
+            <a class="conf" href="https://icpp2026.github.io/" target="_blank" rel="noopener noreferrer">
+              <span class="conf-name">International Conference<br>on Parallel Processing</span>
+              <span class="conf-place">2026 · Singapore</span>
+            </a>
+            </div>
           </div>
         </section>
 
-        <section class="slide" aria-label="CVRP instances motivation">
+        <section class="slide" aria-label="What is CVRP">
           <p class="kicker">The problem</p>
-          <h2>CVRP, the instances we run, why now.</h2>
-          <div class="split" style="grid-template-columns: 0.9fr 1.1fr; margin-top:18px;">
-            <div>
-              <h3 style="font-size:22px; margin-bottom:10px;">What is CVRP?</h3>
-              <p class="lede" style="margin:0; color:var(--ink); font-size:21px;">
-                Vehicles of capacity <b>Q</b> leave a depot, visit each customer once, return.
-                Minimize Euclidean distance. NP-hard. Exact methods do not reach city scale.
-              </p>
-              <h3 style="font-size:22px; margin:22px 0 10px;">Motivation</h3>
-              <p class="lede" style="margin:0; color:var(--ink); font-size:21px;">
-                Keep what works — MST + randomized DFS (ParMDS), 2-opt refine — and
-                <b>engineer it for many cores</b>: angular split, implicit edges, custom heap.
-                Million-customer logistics is the target, not another 200-node toy.
-              </p>
-            </div>
-            <div>
-              <table class="table" style="margin-top:0;">
-                <thead>
-                  <tr><th>Set</th><th>#</th><th>What</th></tr>
-                </thead>
-                <tbody>
-                  <tr><td><b>CVRPLIB</b></td><td>130</td><td>X (100), Golden 9–20, AGS cities, CMT5, E, F, P, tai</td></tr>
-                  <tr><td><b>FILO2</b></td><td>20</td><td>Italian regions, ~20k – 1M customers</td></tr>
-                  <tr><td><b>Synthetic XML</b></td><td>160</td><td>Uchoa generator, 10 – 5×10<sup>6</sup></td></tr>
-                  <tr><td><b>Total</b></td><td>310</td><td>Capacity-only EUC_2D</td></tr>
-                </tbody>
-              </table>
-              <p class="lede" style="margin-top:14px; font-size:18px;">
-                Size bins by customer count: <b>XS</b> 1–100 · <b>S</b> 101–10³ · <b>M</b> to 10⁴ · <b>L</b> to 5×10⁴ · <b>XL</b> to 10⁵ · <b>XXL</b> to 10⁶ · <b>XXXL</b> to 10⁷.
-              </p>
-            </div>
+          <h2>CVRP, in one picture.</h2>
+          <p class="lede">Identical vehicles leave a depot, serve every customer once, and return. Each vehicle holds at most <b style="color:var(--ink);">Q</b>. A drive costs the straight-line distance, and the objective is the total length.</p>
+          <div class="cvrp-panels">
+            <article class="cvrp-panel in">
+              <div class="panel-head">
+                <div>
+                  <h3>1 · The input</h3>
+                  <p class="sub">Depot, coordinates, demands</p>
+                </div>
+                <span class="q-chip">Q = 10</span>
+              </div>
+              <svg viewBox="0 0 640 460" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                <g font-family="Source Sans 3, sans-serif">
+                  <text x="310" y="168" text-anchor="middle" font-size="16" fill="#64748b">depot</text>
+                  <g fill="#fff" stroke="#0f2744" stroke-width="2.5">
+                    <circle cx="150" cy="80" r="22"/><circle cx="70" cy="190" r="22"/><circle cx="145" cy="310" r="22"/>
+                    <circle cx="490" cy="75" r="22"/><circle cx="575" cy="185" r="22"/><circle cx="495" cy="300" r="22"/>
+                    <circle cx="230" cy="390" r="22"/><circle cx="400" cy="390" r="22"/>
+                  </g>
+                  <g font-size="18" font-weight="600" fill="#0f172a" text-anchor="middle" dominant-baseline="central">
+                    <text x="150" y="80">4</text><text x="70" y="190">3</text><text x="145" y="310">3</text>
+                    <text x="490" y="75">2</text><text x="575" y="185">5</text><text x="495" y="300">3</text>
+                    <text x="230" y="390">6</text><text x="400" y="390">4</text>
+                  </g>
+                  <rect x="290" y="200" width="40" height="40" fill="#0f2744"/>
+                  <text x="310" y="220" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="18" font-weight="600">D</text>
+                </g>
+              </svg>
+              <p class="cap">The number in each point is that customer’s demand. Total demand is 30, so at least three vehicles are required. Any pair of points is a legal drive.</p>
+            </article>
+            <article class="cvrp-panel bad">
+              <div class="panel-head">
+                <div>
+                  <h3>2 · Rejected</h3>
+                  <p class="sub">Visited everyone, broke capacity</p>
+                </div>
+                <span class="q-chip">Q = 10</span>
+              </div>
+              <svg viewBox="0 0 640 460" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                <defs>
+                  <marker id="mk-bad" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+                    <path d="M0,0 L10,5 L0,10 Z" fill="#b91c1c"/>
+                  </marker>
+                </defs>
+                <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="310,220 150,80 70,190 310,220" stroke="#94a3b8" stroke-width="3"/>
+                  <polyline points="310,220 490,75 575,185 495,300 310,220" stroke="#94a3b8" stroke-width="3"/>
+                  <polyline points="310,220 230,390 400,390 145,310 310,220" stroke="#b91c1c" stroke-width="4"/>
+                  <polyline points="310,220 276,291" stroke="#b91c1c" stroke-width="4" marker-end="url(#mk-bad)"/>
+                </g>
+                <g font-family="Source Sans 3, sans-serif">
+                  <text x="320" y="442" text-anchor="middle" font-size="16" font-weight="600" fill="#b91c1c" stroke="#fff" stroke-width="5" paint-order="stroke">load 13 &gt; 10</text>
+                  <g fill="#fff" stroke-width="2.5">
+                    <circle cx="150" cy="80" r="22" stroke="#64748b"/><circle cx="70" cy="190" r="22" stroke="#64748b"/>
+                    <circle cx="490" cy="75" r="22" stroke="#64748b"/><circle cx="575" cy="185" r="22" stroke="#64748b"/><circle cx="495" cy="300" r="22" stroke="#64748b"/>
+                    <circle cx="230" cy="390" r="22" stroke="#b91c1c"/><circle cx="400" cy="390" r="22" stroke="#b91c1c"/><circle cx="145" cy="310" r="22" stroke="#b91c1c"/>
+                  </g>
+                  <g font-size="18" font-weight="600" text-anchor="middle" dominant-baseline="central">
+                    <text x="150" y="80" fill="#0f172a">4</text><text x="70" y="190" fill="#0f172a">3</text><text x="145" y="310" fill="#b91c1c">3</text>
+                    <text x="490" y="75" fill="#0f172a">2</text><text x="575" y="185" fill="#0f172a">5</text><text x="495" y="300" fill="#0f172a">3</text>
+                    <text x="230" y="390" fill="#b91c1c">6</text><text x="400" y="390" fill="#b91c1c">4</text>
+                  </g>
+                  <rect x="290" y="200" width="40" height="40" fill="#0f2744"/>
+                  <text x="310" y="220" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="18" font-weight="600">D</text>
+                </g>
+              </svg>
+              <p class="cap">Gray routes are fine (loads 7 and 10). The red route carries 6 + 4 + 3 = 13. One overfilled vehicle makes the whole solution illegal.</p>
+            </article>
+            <article class="cvrp-panel good">
+              <div class="panel-head">
+                <div>
+                  <h3>3 · Feasible</h3>
+                  <p class="sub">Same customers, loads fit</p>
+                </div>
+                <span class="q-chip">Q = 10</span>
+              </div>
+              <svg viewBox="0 0 640 460" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                <defs>
+                  <marker id="mk-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#0369a1"/></marker>
+                  <marker id="mk-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#c2410c"/></marker>
+                  <marker id="mk-c" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 Z" fill="#0f766e"/></marker>
+                </defs>
+                <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="4">
+                  <polyline points="310,220 150,80 70,190 145,310 310,220" stroke="#0369a1"/>
+                  <polyline points="310,220 243,161" stroke="#0369a1" marker-end="url(#mk-a)"/>
+                  <polyline points="310,220 490,75 575,185 495,300 310,220" stroke="#c2410c"/>
+                  <polyline points="310,220 386,159" stroke="#c2410c" marker-end="url(#mk-b)"/>
+                  <polyline points="310,220 230,390 400,390 310,220" stroke="#0f766e"/>
+                  <polyline points="310,220 276,291" stroke="#0f766e" marker-end="url(#mk-c)"/>
+                </g>
+                <g font-family="Source Sans 3, sans-serif">
+                  <g font-size="15" font-weight="600" stroke="#fff" stroke-width="5" paint-order="stroke">
+                    <text x="168" y="198" text-anchor="middle" fill="#0369a1">load 10</text>
+                    <text x="468" y="196" text-anchor="middle" fill="#c2410c">load 10</text>
+                    <text x="313" y="328" text-anchor="middle" fill="#0f766e">load 10</text>
+                  </g>
+                  <g fill="#fff" stroke-width="2.5">
+                    <circle cx="150" cy="80" r="22" stroke="#0369a1"/><circle cx="70" cy="190" r="22" stroke="#0369a1"/><circle cx="145" cy="310" r="22" stroke="#0369a1"/>
+                    <circle cx="490" cy="75" r="22" stroke="#c2410c"/><circle cx="575" cy="185" r="22" stroke="#c2410c"/><circle cx="495" cy="300" r="22" stroke="#c2410c"/>
+                    <circle cx="230" cy="390" r="22" stroke="#0f766e"/><circle cx="400" cy="390" r="22" stroke="#0f766e"/>
+                  </g>
+                  <g font-size="18" font-weight="600" fill="#0f172a" text-anchor="middle" dominant-baseline="central">
+                    <text x="150" y="80">4</text><text x="70" y="190">3</text><text x="145" y="310">3</text>
+                    <text x="490" y="75">2</text><text x="575" y="185">5</text><text x="495" y="300">3</text>
+                    <text x="230" y="390">6</text><text x="400" y="390">4</text>
+                  </g>
+                  <rect x="290" y="200" width="40" height="40" fill="#0f2744"/>
+                  <text x="310" y="220" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="18" font-weight="600">D</text>
+                </g>
+              </svg>
+              <p class="cap">Move the demand-3 customer onto the left route. Each route now sums to 10, starts at the depot, and returns. Among such routings, CVRP wants the shortest.</p>
+            </article>
           </div>
+          <div class="cvrp-rules">
+            <div class="cvrp-rule"><b>Closed at the depot</b><span>Every route starts and ends at the depot. Vehicles are identical, and the fleet is large enough to serve everyone.</span></div>
+            <div class="cvrp-rule"><b>Load at most Q</b><span>Demands on a route sum to at most Q. Each demand is positive and itself at most Q. The depot has demand 0.</span></div>
+            <div class="cvrp-rule"><b>Each customer once</b><span>Every customer lies on exactly one route. A demand is served whole: it is never split across vehicles.</span></div>
+            <div class="cvrp-rule"><b>Shortest total length</b><span>Edge cost is Euclidean distance. The sum over routes is NP-hard to minimize, so city scale needs approximation.</span></div>
+          </div>
+        </section>
+
+        <section class="slide" aria-label="Motivation">
+          <p class="kicker">Motivation</p>
+          <h2>What makes million-scale a different problem.</h2>
+          <p class="lede">A local warehouse is a few thousand customers. Planning across cities is millions. The best city routes radiate from the depot, and a full distance matrix is far larger than the machine.</p>
+          <div class="mot-top">
+            <article class="mot-card">
+              <h3>Routes already form a flower.</h3>
+              <svg viewBox="0 0 440 400" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                <path d="M220,214 L390,190 L326,78 Z" fill="#e0f2fe" stroke="#7dd3fc" stroke-width="1.5"/>
+                <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5">
+                  <path d="M220,214 Q254,122 220,66 Q186,122 220,214" stroke="#0f2744"/>
+                  <path d="M220,214 Q316,198 348,140 Q282,139 220,214" stroke="#0369a1" stroke-width="5"/>
+                  <path d="M220,214 Q282,289 348,288 Q316,230 220,214" stroke="#0284c7"/>
+                  <path d="M220,214 Q186,306 220,362 Q254,306 220,214" stroke="#0f2744"/>
+                  <path d="M220,214 Q124,230 92,288 Q158,289 220,214" stroke="#0284c7"/>
+                  <path d="M220,214 Q158,139 92,140 Q124,198 220,214" stroke="#0f2744"/>
+                </g>
+                <g font-family="Source Sans 3, sans-serif">
+                  <text x="358" y="112" fill="#0369a1" font-size="20" font-weight="600">α</text>
+                  <rect x="202" y="196" width="36" height="36" fill="#0f2744"/>
+                  <text x="220" y="214" text-anchor="middle" dominant-baseline="central" fill="#fff" font-size="16" font-weight="600">D</text>
+                </g>
+              </svg>
+              <p>Best-known routes for Brussels put the depot at the center and each route on a petal. A cone of width α follows one petal. Cones share the depot, so each cone is a smaller CVRP that can run on its own cores.</p>
+            </article>
+            <article class="mot-card">
+              <h3>How far current methods reach.</h3>
+              <div class="wall">
+                <div class="wall-row">
+                  <div class="wall-n">~10²–10³</div>
+                  <div>
+                    <div class="wall-track"><div class="wall-fill" style="width:24%"></div></div>
+                    <b>Exact methods, savings, sweep</b>
+                    <span>Strong on warehouse-sized benchmarks. Impractical once the instance leaves that range.</span>
+                  </div>
+                </div>
+                <div class="wall-row">
+                  <div class="wall-n">a few 10³</div>
+                  <div>
+                    <div class="wall-track"><div class="wall-fill" style="width:40%"></div></div>
+                    <b>HGS-CVRP</b>
+                    <span>Near-best gaps on a few thousand customers. Built for quality, and too heavy past that.</span>
+                  </div>
+                </div>
+                <div class="wall-row">
+                  <div class="wall-n">~5×10⁴</div>
+                  <div>
+                    <div class="wall-track"><div class="wall-fill" style="width:58%"></div></div>
+                    <b>ParMDS</b>
+                    <span>Same MST and randomized DFS idea. Runs out of memory near fifty thousand customers.</span>
+                  </div>
+                </div>
+                <div class="wall-row now">
+                  <div class="wall-n">5×10⁶</div>
+                  <div>
+                    <div class="wall-track"><div class="wall-fill" style="width:100%"></div></div>
+                    <b>BP-MDS — this paper</b>
+                    <span>Five million customers in eight minutes on 40 threads.</span>
+                  </div>
+                </div>
+              </div>
+            </article>
+            <article class="mot-card">
+              <h3>The matrix is the bottleneck.</h3>
+              <p class="mono-line">n = 5×10⁶ · edges ≈ n²/2 ≈ 1.25×10¹³</p>
+              <div class="mega-row">
+                <div class="mega hot"><b>~100 TB</b><span>if every edge weight is stored as 8 bytes</span></div>
+                <div class="mega"><b>192 GB</b><span>memory on the machine used for the experiments</span></div>
+              </div>
+              <p>BP-MDS keeps an MST inside each cone: n − 1 edges. Prim computes a Euclidean weight only for the edge it is testing. A custom min-heap and on-demand allocation make that tree cheap across cores.</p>
+              <p>What stays from ParMDS is the route engine: MST, randomized DFS, then 2-opt. What changes is the split, the implicit graph, and the parallel schedule.</p>
+            </article>
+          </div>
+          <p class="inst-label">310 capacity-only Euclidean instances</p>
+          <table class="table" style="margin-top:6px;">
+            <thead>
+              <tr><th>Set</th><th>#</th><th>What it stresses</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><b>CVRPLIB</b></td><td>130</td><td>Known best solutions: X (100), Golden 9–20, AGS cities, CMT5, E, F, P, tai. Gap against BKS.</td></tr>
+              <tr><td><b>FILO2</b></td><td>20</td><td>Real Italian regions, about 20 thousand to 1 million customers. The city-scale check.</td></tr>
+              <tr><td><b>Synthetic XML</b></td><td>160</td><td>Uchoa generator, from 10 customers up to 5×10⁶. The scaling check.</td></tr>
+            </tbody>
+          </table>
         </section>
 
         <section class="slide slide-view" aria-label="Live routes">
@@ -674,25 +1208,30 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M5 12h14"/></svg>
             </button>
             <p class="kicker">How it solves</p>
-            <h2>α-buckets from the depot</h2>
-            <p class="lede" style="margin-top:12px;">
-              Split customers into angular cones of width <b style="color:#fff;">α</b>.
-              Run MST + ρ randomized DFS on each cone, in parallel, then 2-opt and merge.
-            </p>
+            <h2>Five million in eight minutes.</h2>
             <ol class="steps">
               <li>
                 <span class="n">01</span>
-                <div><strong>Partition</strong><span>k = ⌈360°/α⌉ buckets. Depot in every bucket. No complete graph.</span></div>
+                <div><strong>Partition</strong><span>⌈360°/α⌉ cones. The depot sits in every cone.</span></div>
               </li>
               <li>
                 <span class="n">02</span>
-                <div><strong>Conquer on cores</strong><span>Nested OpenMP: buckets × ρ trials. Implicit Euclidean weights.</span></div>
+                <div><strong>Conquer</strong><span>MST and ρ randomized DFS, one cone per set of cores.</span></div>
               </li>
               <li>
                 <span class="n">03</span>
-                <div><strong>Stitch</strong><span>Refine each bucket, union routes. Feasible CVRP, minutes not days.</span></div>
+                <div><strong>Stitch</strong><span>2-opt inside the cone, then union the routes.</span></div>
               </li>
             </ol>
+            <div class="hits">
+              <div class="hit"><b>5×10<sup>6</sup></b><span>customers, 8 minutes</span></div>
+              <div class="hit"><b>2370×</b><span>vs HGS, 40 threads</span></div>
+              <div class="hit"><b>100×</b><span>vs HGS, 1 thread</span></div>
+              <div class="hit"><b>20–60×</b><span>vs ParMDS</span></div>
+              <div class="hit"><b>1.27%</b><span>gap, 20 FILO2 cities</span></div>
+              <div class="hit"><b>8.51%</b><span>gap, wherever a BKS exists</span></div>
+            </div>
+            <p class="solve-foot">310 instances · Xeon Gold 6248 · 40 threads · 192 GB</p>
           </div>
           <div class="solve-fig">
             <img class="solve-photo" data-embed="partitions" alt="Angular bucket partitions" />
@@ -700,21 +1239,6 @@
           </div>
         </section>
 
-        <section class="slide" aria-label="Headline results">
-          <p class="kicker">What to remember</p>
-          <h2>The numbers we actually hit.</h2>
-          <div class="stats" style="grid-template-columns: repeat(3, 1fr);">
-            <div class="stat"><b>5×10<sup>6</sup></b><em>customers solved in 8 minutes</em></div>
-            <div class="stat"><b>2370×</b><em>faster than HGS-CVRP (multi-thread)</em></div>
-            <div class="stat"><b>100×</b><em>faster than HGS-CVRP (1 thread)</em></div>
-            <div class="stat"><b>20–60×</b><em>faster than ParMDS, which OOMs ~50k</em></div>
-            <div class="stat"><b>1.27%</b><em>geo-mean gap on 20 FILO2 cities</em></div>
-            <div class="stat"><b>8.51%</b><em>geo-mean gap wherever a BKS exists</em></div>
-          </div>
-          <p class="note" style="max-width:none;">
-            310 instances. Dual-socket Xeon Gold 6248, 40 threads, 192 GB. Code: github.com/CodeCraftsmanSandeep/BP-MDS
-          </p>
-        </section>
       </div>
 
       <nav class="nav" aria-label="Slide controls">
@@ -743,7 +1267,7 @@
   <div id="pdf-busy">Exporting PDF…</div>
 
   <script>
-    const STAGE_W = 1920, STAGE_H = 1080, LIVE = 2, SOLVE = 3, total = 5;
+    const STAGE_W = 1920, STAGE_H = 1080, LIVE = 3, SOLVE = 4, total = 5;
     const VIEWS = [
       { id: "brussels1", name: "Brussels 1", src: "views/BKS_Brussels1_routes.html" },
       { id: "brussels2", name: "Brussels 2", src: "views/BKS_Brussels2_routes.html" },
@@ -762,8 +1286,14 @@
     const viewFrame = document.getElementById("view-frame");
     const inspectFrame = document.getElementById("inspect-frame");
 
-    let i = 0, currentView = "brussels1";
+    let i = 0, currentView = "brussels1", scrollLock = 0;
     const solveSlide = document.getElementById("solve-slide");
+    const slideEls = [...document.querySelectorAll("#slides .slide")];
+
+    function presentationMode() {
+      if (document.body.classList.contains("pdf-capture")) return true;
+      return window.innerWidth >= 1280 && window.innerHeight >= 720;
+    }
 
     function setSolveMin(on) {
       solveSlide.classList.toggle("minimized", on);
@@ -777,14 +1307,21 @@
       setSolveMin(false);
     });
 
-    function fitStage() {
-      const s = Math.min(window.innerWidth / STAGE_W, window.innerHeight / STAGE_H);
-      stage.style.transform = "scale(" + s + ")";
+    function applyMode() {
+      const present = presentationMode();
+      document.documentElement.classList.toggle("reflow", !present);
+      if (present) {
+        const s = Math.min(window.innerWidth / STAGE_W, window.innerHeight / STAGE_H);
+        stage.style.transform = "scale(" + s + ")";
+      } else {
+        stage.style.transform = "none";
+      }
+      render(false);
     }
-    window.addEventListener("resize", fitStage);
-    window.addEventListener("orientationchange", fitStage);
-    document.addEventListener("fullscreenchange", fitStage);
-    fitStage();
+    window.addEventListener("resize", applyMode);
+    window.addEventListener("orientationchange", applyMode);
+    document.addEventListener("fullscreenchange", applyMode);
+    applyMode();
 
     document.querySelectorAll("img[data-embed]").forEach((img) => {
       const src = window.SLIDE_IMGS && window.SLIDE_IMGS[img.dataset.embed];
@@ -822,15 +1359,17 @@
 
     function pad(n) { return String(n).padStart(2, "0"); }
 
-    function render() {
-      slides.style.transform = "translateX(" + (-i * STAGE_W) + "px)";
+    function render(doScroll) {
+      const reflow = document.documentElement.classList.contains("reflow");
+      if (reflow) slides.style.transform = "none";
+      else slides.style.transform = "translateX(" + (-i * STAGE_W) + "px)";
       pager.textContent = pad(i + 1) + " / " + pad(total);
       progress.style.width = ((i + 1) / total * 100) + "%";
       prev.disabled = i === 0;
       next.disabled = i === total - 1;
-      document.body.classList.toggle("on-view", i === LIVE);
-      if (i === LIVE && !viewFrame.src) setView(currentView);
-      if (i === SOLVE) {
+      document.body.classList.toggle("on-view", !reflow && i === LIVE);
+      if ((reflow || i === LIVE) && !viewFrame.src) setView(currentView);
+      if (i === SOLVE || reflow) {
         solveSlide.classList.remove("entered");
         void solveSlide.offsetWidth;
         solveSlide.classList.add("entered");
@@ -838,12 +1377,16 @@
         solveSlide.classList.remove("entered");
         setSolveMin(false);
       }
+      if (reflow && doScroll) {
+        scrollLock = Date.now() + 700;
+        slideEls[i].scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     }
 
     function go(d) {
       if (document.body.classList.contains("inspect-open")) return;
       i = Math.max(0, Math.min(total - 1, i + d));
-      render();
+      render(document.documentElement.classList.contains("reflow"));
     }
 
     prev.addEventListener("click", () => go(-1));
@@ -858,8 +1401,8 @@
       if (document.body.classList.contains("inspect-open")) return;
       if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { e.preventDefault(); go(1); }
       if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); go(-1); }
-      if (e.key === "Home") { e.preventDefault(); i = 0; render(); }
-      if (e.key === "End") { e.preventDefault(); i = total - 1; render(); }
+      if (e.key === "Home") { e.preventDefault(); i = 0; render(document.documentElement.classList.contains("reflow")); }
+      if (e.key === "End") { e.preventDefault(); i = total - 1; render(document.documentElement.classList.contains("reflow")); }
       if (e.key === "f" || e.key === "F") { e.preventDefault(); toggleFull(); }
       if (e.key === "p" || e.key === "P") { e.preventDefault(); exportPdf(); }
       if ((e.key === "m" || e.key === "M") && i === SOLVE) {
@@ -889,6 +1432,8 @@
       const slideEls = [...document.querySelectorAll("#slides .slide")];
       const busy = document.getElementById("pdf-busy");
       const prevTransition = slides.style.transition;
+      document.documentElement.classList.remove("reflow");
+      stage.style.transform = "none";
       document.body.classList.add("pdf-capture");
       slides.style.transition = "none";
       try {
@@ -935,14 +1480,40 @@
         slides.style.transition = prevTransition;
         document.body.classList.remove("pdf-capture");
         i = restored;
-        render();
+        applyMode();
         pdfBtn.disabled = false;
       }
     }
 
     pdfBtn.addEventListener("click", exportPdf);
+
+    let touchX = null;
+    stage.addEventListener("touchstart", (e) => {
+      if (e.touches.length !== 1) { touchX = null; return; }
+      touchX = e.touches[0].clientX;
+    }, { passive: true });
+    stage.addEventListener("touchend", (e) => {
+      if (touchX == null || document.documentElement.classList.contains("reflow")) return;
+      const dx = e.changedTouches[0].clientX - touchX;
+      touchX = null;
+      if (Math.abs(dx) < 48) return;
+      go(dx < 0 ? 1 : -1);
+    }, { passive: true });
+
+    window.addEventListener("scroll", () => {
+      if (!document.documentElement.classList.contains("reflow") || Date.now() < scrollLock) return;
+      const mark = window.innerHeight * 0.35;
+      let idx = 0;
+      slideEls.forEach((el, n) => {
+        if (el.getBoundingClientRect().top <= mark) idx = n;
+      });
+      if (idx === i) return;
+      i = idx;
+      render(false);
+    }, { passive: true });
+
     paintPicks(document.getElementById("view-picks-nav"), currentView);
-    render();
+    render(false);
   </script>
 </body>
 </html>
