@@ -1,8 +1,17 @@
+# Compiler (override on macOS: make CXX=g++-15)
 CXX = g++
-# Using 'native' since compilation happens directly on the compute node
+
+# Build flags:
+#   -O3              speed optimizations
+#   -march=native    use this machine's CPU features
+#   -flto            link-time optimization
+#   -std=c++17       C++17
+#   -fopenmp         OpenMP parallelism
+#   -IInclude        look for headers in Include/
+#   -static-libstdc++  static-link libstdc++ (Linux clusters)
 OMPFLAGS = -O3 -march=native -flto -std=c++17 -fopenmp -IInclude -static-libstdc++
 
-# All common source files EXCEPT the Solvers
+# Shared sources (everything under Lib/ except the main Solver.cpp)
 COMMON_SRC = Src/Main.cpp \
              Lib/Bucket_Partitioned_MDS/CVRP.cpp \
              Lib/Bucket_Partitioned_MDS/Solution.cpp \
@@ -10,32 +19,51 @@ COMMON_SRC = Src/Main.cpp \
              Lib/Initializer.cpp \
              $(shell find Lib/Utils -name '*.cpp')
 
-# Define the 3 target executables
-TARGET_NORMAL = Bin/bucket-partitioned-MDS
-TARGET_SET    = Bin/bucket-partitioned-MDS-set
-TARGET_DFS    = Bin/bucket-partitioned-MDS-dfs
+# Main solver (default)
+TARGET = Bin/bucket-partitioned-MDS
 
-# Build all 3 by default
-all: $(TARGET_NORMAL) $(TARGET_SET) $(TARGET_DFS)
+# Benchmarking / ablation binaries
+TARGET_SET = Bin/bucket-partitioned-MDS-set
+TARGET_DFS = Bin/bucket-partitioned-MDS-dfs
+TARGET_BFS = Bin/bucket-partitioned-MDS-bfs
+TARGET_BKT = Bin/bucket-partitioned-MDS-buckets
 
-# Compile Rule: Custom MinHeap + Lazy DFS (Original)
-$(TARGET_NORMAL): $(COMMON_SRC) Lib/Bucket_Partitioned_MDS/Solver.cpp
+BENCH_TARGETS = $(TARGET) $(TARGET_SET) $(TARGET_DFS) $(TARGET_BFS) $(TARGET_BKT)
+
+# Default: main solver only
+all: $(TARGET)
+
+# All variants used for benchmarking
+bench-marking: $(BENCH_TARGETS)
+
+$(TARGET): $(COMMON_SRC) Lib/Bucket_Partitioned_MDS/Solver.cpp
 	@mkdir -p Bin
 	$(CXX) $(OMPFLAGS) $^ -o $@
 	@echo "Build successful: $@"
 
-# Compile Rule: CPP Set (From new directory)
-$(TARGET_SET): $(COMMON_SRC) Benchmarking_Code/Solver_cpp_set.cpp
+$(TARGET_SET): $(COMMON_SRC) Scripts/BenchmarkingCode/Solver_cpp_set.cpp
 	@mkdir -p Bin
 	$(CXX) $(OMPFLAGS) $^ -o $@
 	@echo "Build successful: $@"
 
-# Compile Rule: Non-Lazy DFS (From new directory)
-$(TARGET_DFS): $(COMMON_SRC) Benchmarking_Code/Solver_Non_Lazy_DFS.cpp
+$(TARGET_DFS): $(COMMON_SRC) Scripts/BenchmarkingCode/Solver_Non_Lazy_DFS.cpp
 	@mkdir -p Bin
 	$(CXX) $(OMPFLAGS) $^ -o $@
 	@echo "Build successful: $@"
 
+$(TARGET_BFS): $(COMMON_SRC) Scripts/BenchmarkingCode/Solver_BFS.cpp
+	@mkdir -p Bin
+	$(CXX) $(OMPFLAGS) $^ -o $@
+	@echo "Build successful: $@"
+
+$(TARGET_BKT): $(COMMON_SRC) Scripts/BenchmarkingCode/Solver_buckets.cpp
+	@mkdir -p Bin
+	$(CXX) $(OMPFLAGS) $^ -o $@
+	@echo "Build successful: $@"
+
+# Remove everything in Bin/
 clean:
-	rm -f $(TARGET_NORMAL) $(TARGET_SET) $(TARGET_DFS)
-	@echo "Cleaned build artifacts."
+	rm -rf Bin/*
+	@echo "Cleaned Bin/"
+
+.PHONY: all bench-marking clean

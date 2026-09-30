@@ -1,0 +1,44 @@
+\begin{algorithm}
+\caption{\textsc{Bucket\_Partitioned\_MDS}}
+\label{alg:bucket-cvrp}
+\SetEndCharOfAlgoLine{}
+\SetAlgoLined
+
+\KwIn{CVRP instance, parameters $\alpha$, $\rho$}
+\KwOut{$routes$: feasible CVRP solution; $cost$: total cost}
+
+$final\_routes \gets \emptyset$, $final\_cost \gets 0$\;  \label{alg:bucket-cvrp:line1}
+
+\tcp{Divide CVRP}
+$buckets \leftarrow \textsc{Get\_Buckets}(CVRP, \alpha)$  \label{alg:bucket-cvrp:line2}
+
+
+\For{bucket in buckets \textbf{in parallel}} { \label{alg:bucket-cvrp:line3}
+
+    $T \leftarrow \textsc{Construct\_MST}(CVRP, bucket)$\;                                              \label{alg:bucket-cvrp:line4}
+    
+    $min\_cost\_routes \leftarrow \emptyset$, $min\_cost \leftarrow \infty$\;                           \label{alg:bucket-cvrp:line5}
+    
+    \tcp{Exploit the MST by exploring multiple DFS orderings}
+    \For{$\rho$ iterations \textbf{in parallel}}{  \label{alg:bucket-cvrp:line6}
+        $(routes, cost) \leftarrow \textsc{Get\_Routes\_From\_Random\_DFS}(CVRP, T, bucket)$\; \label{alg:bucket-cvrp:line7}
+
+        \Critical{                                                                                      \label{alg:bucket-cvrp:line8}
+            \If{$cost < min\_cost$}{                                                                    \label{alg:bucket-cvrp:line9}
+                $min\_cost\_routes \leftarrow routes$, $min\_cost \leftarrow cost$\;                                                           \label{alg:bucket-cvrp:line10}
+            } \label{alg:bucket-cvrp:line11}
+        } \label{alg:bucket-cvrp:line12}
+    } \label{alg:bucket-cvrp:line13}
+
+    \tcp{Refine and combine routes from all partitions}
+    $(refined\_routes, refined\_cost) \leftarrow \textsc{Refine\_Routes}(CVRP, min\_cost\_routes)$\;    \label{alg:bucket-cvrp:line17}
+    \Critical{                                                                                          \label{alg:bucket-cvrp:line18}
+        $final\_routes \leftarrow final\_routes \cup refined\_routes$\;                                 \label{alg:bucket-cvrp:line19}
+        $final\_cost \leftarrow final\_cost + refined\_cost$\;                                          \label{alg:bucket-cvrp:line20}
+    }                                                                                                   \label{alg:bucket-cvrp:line21}
+}                                                                                                       \label{alg:bucket-cvrp:line22}
+\Return{$(final\_routes, final\_cost)$}                                                                 \label{alg:bucket-cvrp:line23}
+
+\end{algorithm}
+
+

@@ -1,0 +1,80 @@
+
+\begin{algorithm}[H]
+\caption{\textsc{Construct\_MST}}
+\label{alg:construct-mst}
+\SetAlgoLined
+\SetEndCharOfAlgoLine{}
+
+\KwIn{CVRP instance: $CVRP$, bucket of vertices: $bucket$}
+\KwOut{Adjacency list $T$ representing a MST over $bucket$}
+
+$num\_nodes \gets |bucket|$, $depot\_index \gets 0$\;                               \label{alg:construct-mst:line1}
+$T \gets$ list of $num\_nodes$ empty lists\;                                        \label{alg:construct-mst:line2}
+MinHeap $H.\textsc{Initialize}(num\_nodes)$\;                                       \label{alg:construct-mst:line3}
+
+\tcp{Lines 4--10: MST construction starting from $depot\_index$}
+$H.\textsc{DecreaseKey}(NULL,\ depot\_index,\ 0)$\;                                 \label{alg:construct-mst:line4}
+$(u\_index,\ v\_index,\ weight) \gets H.\textsc{Pop}()$\;                          
+$v \gets bucket[v\_index]$\;                                                    
+\For{$w\_index \gets 0$ \KwTo $num\_nodes - 1$}{                                
+    $w \gets bucket[w\_index]$\;                                                
+    $H.\textsc{DecreaseKey}(v\_index,\ w\_index,\ CVRP.distance(v,\ w))$\;      
+}                                                                               
+
+\tcp{Lines 11--20: Grow the MST following Prim's algorithm}
+\While{$H$ not empty}{                                                              \label{alg:construct-mst:line5}
+
+    $(u\_index,\ v\_index,\ weight) \gets H.\textsc{Pop}()$\;                       \label{alg:construct-mst:line6}
+
+    \tcp{Lines 13--14: Add edge connecting $v\_index$ to the MST}
+    $T[u\_index].push\_back(v\_index)$\;                                            \label{alg:construct-mst:line13}
+    $T[v\_index].push\_back(u\_index)$\;                                            \label{alg:construct-mst:line14}
+
+    \tcp{Lines 15--19: Update keys of remaining vertices based on $v\_index$}
+    $v \gets bucket[v\_index]$\;                                                    \label{alg:construct-mst:line15}
+    \For{$w\_index \gets 0$ \KwTo $num\_nodes - 1$}{                                \label{alg:construct-mst:line16}
+        $w \gets bucket[w\_index]$\;                                                \label{alg:construct-mst:line17}
+        $H.\textsc{DecreaseKey}(v\_index,\ w\_index,\ CVRP.distance(v,\ w))$\;      \label{alg:construct-mst:line18}
+    }                                                                               \label{alg:construct-mst:line19}
+}                                                                                   \label{alg:construct-mst:line20}
+
+\Return{$T$}                                                                        \label{alg:construct-mst:line21}
+\end{algorithm}
+
+
+
+\begin{algorithm}[H]
+\caption{\textsc{Construct\_MST}}
+\label{alg:construct-mst}
+\SetAlgoLined
+\SetEndCharOfAlgoLine{}
+
+\KwIn{CVRP instance: $CVRP$, bucket of vertices: $bucket$}
+\KwOut{Adjacency list $T$ representing a MST over $bucket$}
+
+$num\_nodes \gets |bucket|$, $depot\_index \gets 0$\;                               \label{alg:construct-mst:line1}
+$T \gets$ list of $num\_nodes$ empty lists\;                                        \label{alg:construct-mst:line2}
+MinHeap $H.\textsc{Initialize}(num\_nodes)$\;                                       \label{alg:construct-mst:line3}
+$H.\textsc{DecreaseKey}(NULL,\ depot\_index,\ 0)$\;                                 \label{alg:construct-mst:line4}
+
+\tcp{Lines 5--16: Grow the MST following Prim's algorithm}
+\While{$H$ not empty}{                                                              \label{alg:construct-mst:line5}
+
+    $(u\_index,\ v\_index,\ weight) \gets H.\textsc{Pop}()$\;                       \label{alg:construct-mst:line6}
+
+    \tcp{Lines 7--10: Add edge connecting $v\_index$ to the MST when $u\_index$ is not null}
+    \If{$u\_index \neq \textsc{null}$}{
+        $T[u\_index].push\_back(v\_index)$\;                                            \label{alg:construct-mst:line13}
+        $T[v\_index].push\_back(u\_index)$\;                                            \label{alg:construct-mst:line14}
+    }
+
+    \tcp{Lines 11--15: Relax edges from $v\_index$ to all vertices in $bucket$}
+    $v \gets bucket[v\_index]$\;                                                    \label{alg:construct-mst:line15}
+    \For{$w\_index \gets 0$ \KwTo $num\_nodes - 1$}{                                \label{alg:construct-mst:line16}
+        $w \gets bucket[w\_index]$\;                                                \label{alg:construct-mst:line17}
+        $H.\textsc{DecreaseKey}(v\_index,\ w\_index,\ CVRP.distance(v,\ w))$\;      \label{alg:construct-mst:line18}
+    }                                                                               \label{alg:construct-mst:line19}
+}                                                                                   \label{alg:construct-mst:line20}
+
+\Return{$T$}                                                                        \label{alg:construct-mst:line21}
+\end{algorithm}

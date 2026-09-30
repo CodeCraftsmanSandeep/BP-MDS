@@ -1,93 +1,146 @@
-# BP-MDS: Bucket-Partitioned MDS CVRP Solver (Million Scale)
+<h1 align="center">BP-MDS</h1>
+<p align="center">
+  <b>Bucket-Partitioned MDS: CVRP Solver</b><br/>
+  Million-scale <b>Capacitated Vehicle Routing</b> — partition the plane, conquer in parallel.
+</p>
 
-![2-D partitions](Results/2-d-partitions-refined/2-d-partitions-refined.png)
+<p align="center">
+  <img src="Results/assets/2-d-partitions-refined.png" alt="Angular bucket partitions from the depot" width="920"/>
+</p>
 
-Parallel **Bucket-Partitioned Minimum-Degree Search** for the Capacitated Vehicle Routing Problem (CVRP), built to handle million-customer instances.
+<p align="center">
+  <img alt="C++17" src="https://img.shields.io/badge/C%2B%2B-17-00599C?style=for-the-badge&logo=cplusplus&logoColor=white"/>
+  <img alt="OpenMP" src="https://img.shields.io/badge/Parallel-OpenMP-e6522c?style=for-the-badge"/>
+  <img alt="Scale" src="https://img.shields.io/badge/Scale-10%E2%81%B6%2B%20customers-2ea44f?style=for-the-badge"/>
+  <img alt="Linux" src="https://img.shields.io/badge/Primary-Linux%20cluster-FCC624?style=for-the-badge&logo=linux&logoColor=black"/>
+</p>
 
-The plane is partitioned into angular buckets from the depot (angle **α**). Each bucket is solved via an MST plus **ρ** randomized DFS iterations, with buckets processed in parallel (OpenMP).
-
----
-
-## Quick start
-
-**Needs:** C++17 compiler with OpenMP.
-
-```bash
-make
-
-./Bin/bucket-partitioned-MDS \
-  --alpha=30 \
-  --rho=100 \
-  --input=Inputs/Sample/toy.vrp \
-  --output=solution.sol
-```
-
-| Flag | Meaning |
-|:-----|:--------|
-| `--alpha` | Partition angle (degrees, `0 < α ≤ 360`) |
-| `--rho` | Number of randomized DFS iterations |
-| `--input` | Path to a `.vrp` instance |
-| `--output` | Path for the solution file |
+<p align="center">
+  <a href="#how-it-flows">Flow</a> ·
+  <a href="#bks-routes-at-a-glance">Routes</a> ·
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#platforms">Platforms</a> ·
+  <a href="Inputs">310 instances</a> ·
+  <a href="Results">Results</a>
+</p>
 
 ---
 
-## Plot routes (BKS figures)
+### Why BP-MDS?
 
-From the repo root, one command sets up the venv and generates the plots:
+| | |
+|:--|:--|
+| **Angular buckets** | Depot-centered sectors (angle **α**) turn one huge CVRP into many smaller ones |
+| **MDS core** | MST + **ρ** randomized DFS tours — simple, fast, parallel-friendly |
+| **OpenMP** | Buckets (and DFS trials) run concurrently on multi-core nodes |
+| **Million scale** | Built for synthetic & FILO2-sized instances, not only classic CVRPLIB toys |
+
+---
+
+## How it flows
+
+The code follows this pipeline end-to-end (`Src/Main.cpp` → `Lib/Bucket_Partitioned_MDS/`):
+
+1. **`.vrp` instance** — load customers, demands, capacity  
+2. **Parse & init** — CLI args, OpenMP setup  
+3. **Partition α** — angular buckets around the depot  
+4. **MST / bucket** — spanning tree on each bucket  
+5. **ρ × DFS** — randomized depth-first tours; keep the best  
+6. **Merge · verify · `.sol`** — combine routes and write the solution  
+
+**In one line:** *partition → MST → diversify DFS → parallel reduce → solution.*
+
+---
+
+## BKS routes at a glance (🌼 like pattern)
+
+<p align="center">
+  <img src="Results/BKSPlots/combined/BKS_Antwerp1_Antwerp2_combined.png" alt="Antwerp1 vs Antwerp2 BKS routes" width="920"/>
+</p>
+
+<p align="center"><sub>Antwerp — more under <code>Results/BKSPlots/</code></sub></p>
+
+Regenerate figures:
 
 ```bash
 bash Scripts/BKSPlotsGenerator/run_bks_plots.sh --pdf --html
 ```
 
-That writes:
+---
 
-- `Results/BKSPlots/separated/` — individual plots for **all** of `Inputs/` (same folder layout, e.g. `separated/CVRPLIB/AGS/BKS_Antwerp1_routes.png`)
-- `Results/BKSPlots/combined/` — side-by-side AGS pairs (`BKS_*_combined.png` / `.pdf`)
+## Platforms
 
-PNG-only: omit the flags (`bash Scripts/BKSPlotsGenerator/run_bks_plots.sh`).  
-`--html` applies only to separated plots; `--pdf` applies to both.
-
-For manual / advanced usage, see [`Scripts/BKSPlotsGenerator/`](Scripts/BKSPlotsGenerator/).
+| Platform | Status | Notes |
+|:---------|:-------|:------|
+| **Linux** | ✅ Primary | Cluster target. OpenMP + memory stats work as designed |
+| **macOS** | ✅ Local OK | `make CXX=g++-15` (Homebrew GCC). Solve works; `/proc` warning is harmless; **MB in `.sol` unreliable** |
+| **Windows** | ❌ Native | Use **WSL** (Ubuntu) and follow Linux steps |
 
 ---
 
-## Project structure
+## Quick start
 
-```text
-.
-├── Src/Main.cpp              # Entry point
-├── Include/                  # Headers
-├── Lib/                      # Implementation
-│   ├── Bucket_Partitioned_MDS/
-│   ├── Utils/
-│   ├── Command_Line_Args.cpp
-│   └── Initializer.cpp
-├── Inputs/                   # Instances + BKS solutions
-│   ├── CVRPLIB/              # CMT, Golden, X, AGS
-│   ├── FILO2/I/              # Large Italian regions
-│   ├── Synthetic/            # XML-style generated instances
-│   ├── Sample/               # Tiny toys for local checks
-│   ├── instances.csv
-│   └── README.md
-├── Results/                  # Figures & result artifacts
-├── Scripts/                  # Benchmark / plot / generation tools
-└── Makefile
+```bash
+# Build  (macOS: add CXX=g++-15)
+make                    # main solver → Bin/bucket-partitioned-MDS
+make bench-marking      # main + set / dfs / bfs / buckets variants
+make clean              # wipe Bin/
+
+# Solve the toy sample
+mkdir -p Results/Output/Sample
+./Bin/bucket-partitioned-MDS \
+  --alpha=30 \
+  --rho=100 \
+  --input=Inputs/Sample/toy.vrp \
+  --output=Results/Output/Sample/toy.sol
 ```
 
+| Flag | Role |
+|:-----|:-----|
+| `--alpha` | Partition angle in degrees (`0 < α ≤ 360`) |
+| `--rho` | Randomized DFS iterations per bucket |
+| `--input` | Path to a `.vrp` file |
+| `--output` | Where to write the `.sol` |
+
+Full benchmark catalog (**310** instances: CVRPLIB · FILO2 · Synthetic) → [`Inputs/README.md`](Inputs/README.md)  
+Large `.vrp` sets ship as **GitHub Release** zips (folders are gitignored).
+
 ---
 
-## Build targets
+## Repository map
 
-| Binary | Role |
-|:-------|:-----|
-| `Bin/bucket-partitioned-MDS` | Main solver (custom min-heap + lazy DFS) |
-| `Bin/bucket-partitioned-MDS-set` | Baseline using `std::set` for MST |
-| `Bin/bucket-partitioned-MDS-dfs` | Non-lazy DFS variant |
+```text
+BP-MDS/
+├── Src/Main.cpp                 # CLI → solve → verify → print
+├── Include/ · Lib/              # Solver, CVRP I/O, utils, OpenMP init
+├── Inputs/                      # Sample + catalog (CSV / README)
+├── Results/
+│   ├── assets/                  # README figures (e.g. partitions)
+│   ├── BKSPlots/                # Route plots (combined / separated)
+│   ├── Output/                  # Solver .sol outputs
+│   ├── ExperimentalEvaluation/  # Experimental notes / extras
+│   └── README.md                # Per-instance costs & gaps
+├── Scripts/
+│   ├── BenchmarkingCode/        # Ablation solvers (set / dfs / bfs / buckets)
+│   └── …                        # Plots & tooling
+└── Makefile                     # make · make bench-marking · make clean
+```
+
+Ablation binaries: `make bench-marking` (sources in `Scripts/BenchmarkingCode/`).
 
 ---
 
-## More detail
+## Dive deeper
 
-- Instance catalog & BKS: [`Inputs/README.md`](Inputs/README.md)
-- Pipeline / scaling / ρ sweeps: [`Scripts/`](Scripts/)
-- Route plots: [`Scripts/BKSPlotsGenerator/run_bks_plots.sh`](Scripts/BKSPlotsGenerator/run_bks_plots.sh)
+| | |
+|:--|:--|
+| Instance index & BKS | [`Inputs/README.md`](Inputs/README.md) |
+| Per-instance results & gaps | [`Results/README.md`](Results/README.md) |
+| Route plot pipeline | [`Scripts/BKSPlotsGenerator/`](Scripts/BKSPlotsGenerator/) |
+| Sweep / scaling scripts | [`Scripts/`](Scripts/) |
+
+---
+
+<p align="center">
+  <i>Partition hard. Search light. Scale far.</i>
+</p>

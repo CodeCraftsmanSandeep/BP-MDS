@@ -1,0 +1,16 @@
+
+
+\input{sections/helpers/BPMDS}
+
+Let $k = \left\lceil \frac{360^\circ}{\alpha} \right\rceil$ denote the number of angular buckets. Let $\{s_0, s_1, \dots, \allowbreak s_{k-1}\}$ denote the sizes of the buckets, with $\sum_{j=0}^{k-1} s_j = N - 1 + k$, where the $N-1$ customers appear exactly once, while the depot is replicated across all $k$ buckets.
+
+\textbf{Creation of Buckets:} The \textsc{Get\_Buckets} procedure assigns each of the $N-1$ customers to one of the $k$ buckets in $O((N-1)k)$ time, while bucket initialization and depot insertion require $O(k)$ time, yielding an overall time complexity of $O(Nk)$ and space complexity of $O(N + k)$.
+
+\textbf{Per-Bucket Processing:} For a bucket of size $s_j$, MST construction (Prim’s with binary heap on an implicit complete graph) takes $O(s_j^2 \log s_j)$ time and $O(s_j)$ space. Each DFS-based route generation requires $O(s_j)$ time and space. Route refinement (e.g., 2-opt) costs $O(s_j^2)$ time and $O(s_j)$ space. 
+
+$O\!\left(Nk + \sum_{j=0}^{k-1} \left( s_j^2 \log s_j + \rho\, s_j + s_j^2 \right)\right)$ is the overall time complexity in the sequential setting, while the space complexity is $O(N + k)$. Using the fact that $\sum_{j=0}^{k-1} s_j^2 \log s_j \le \left(\sum_{j=0}^{k-1} s_j\right)^2 \log\!\left(\sum_{j=0}^{k-1} s_j\right) = (N-1+k)^2 \log(N-1+k)$ (maximized when all the vertices lie in a single bucket), and noting that $k \ll N$, we obtain $\sum_{j=0}^{k-1} s_j^2 \log s_j = O(N^2 \log N)$. Hence, the overall sequential time complexity is upper bounded by $O(N^2 \log N)$, although this bound is conservative. In the parallel setting (assuming full parallelism), the overall time complexity is $O\!\left(Nk + \max_{0 \le j \le k-1} \left( s_j^2 \log s_j + s_j + s_j^2 \right)\right)$, where the execution time is dominated by the largest bucket.  For unbalanced buckets, the largest bucket becomes the bottleneck due to its $O(s_j^2 \log s_j)$ MST construction cost. Since the average bucket size is $\bar{s} = \frac{\sum_{j=0}^{k-1} s_j}{k} = \frac{N-1+k}{k} \approx \frac{N}{k}$, increasing $k$ reduces the average bucket size, thereby lowering the dominant per-bucket computation cost and improving parallel scalability. For approximately balanced buckets, i.e., $s_j \approx \frac{N}{k}$ for all $j$, $O\!\left(Nk + \frac{N^2}{k} \log \frac{N}{k} + \rho N  + \frac{N^2}{k} \right)$ is the sequential time complexity, while the parallel time complexity reduces to $O\!\left(Nk + \frac{N^2}{k^2} \log \frac{N}{k} + \frac{N}{k} + \frac{N^2}{k^2}\right)$. This demonstrates a near-$k$-fold reduction in the dominant quadratic term under full parallelism and eliminates the $\rho$ component. The running time decreases with increasing $k$, while the resulting increase in buckets enables greater parallelism, yielding strong scalability with increasing core counts.
+
+
+% The running time decreases with increasing $k$, while the proportional increase in parallelism enables strong scalability with increasing core counts.
+
+% The running time decreases with increasing $k$, while the degree of parallelism grows proportionally, as more buckets enable greater concurrency across threads. Consequently, the approach exhibits strong scalability with an increasing number of cores.

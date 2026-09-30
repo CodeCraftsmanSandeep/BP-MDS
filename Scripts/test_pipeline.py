@@ -11,7 +11,7 @@ def compile_binaries():
     try:
         # First, wipe old binaries
         subprocess.run(["make", "clean"], check=True)
-        # Then, build all three targets
+        # Then, build all targets
         subprocess.run(["make"], check=True)
         print("\nAll binaries compiled successfully and placed in ./Bin/")
     except subprocess.CalledProcessError as e:
@@ -27,7 +27,7 @@ def step0_fast_track():
     print("="*60)
 
     OLD_CSV = "Old_Outputs.csv" 
-    NEW_CSV = "New_Outputs.csv"
+    NEW_CSV = "Outputs/Outputs.csv"
     INPUTS_DIR = "Inputs-all"  
     EXECUTABLE = "./Bin/bucket-partitioned-MDS"
     NUM_EXECUTIONS = 5 
@@ -137,7 +137,7 @@ def step1_script():
     print("="*60)
 
     num_executions = 5
-    rho_values = [5000]
+    rho_values = [10000]
 
     inputs_dir      = "Inputs"
     output_base_dir = "Outputs"
@@ -159,7 +159,7 @@ def step1_script():
         relative = os.path.relpath(root, inputs_dir)
         first_folder = relative.split(os.sep)[0]
 
-        # Determine alpha range (PURE PYTHON - NO NUMPY NEEDED)
+        # Determine alpha range
         if first_folder == "XS":
             alpha_values = list(range(1, 360 + 1))
         elif first_folder == "S":
@@ -192,13 +192,9 @@ def step1_script():
             file_base = os.path.splitext(file)[0]
             csv_path  = os.path.join(output_subdir, file_base + ".csv")
 
-            # ==========================================================
-            # THE CHECKPOINT SKIP
-            # ==========================================================
             if os.path.exists(csv_path):
                 print(f"Skipping {file}: '{csv_path}' already exists.")
                 continue
-            # ==========================================================
 
             with open(csv_path, "w") as csv_file:
                 csv_file.write("alpha,rho,time(sec),max_memory_diff(MB),cost\n")
@@ -246,7 +242,7 @@ def step1_script():
                             total_cost += cost_val
 
                         avg_time = total_time / num_executions
-                        avg_max_memory_diff = total_max_memory_diff / num_executions;
+                        avg_max_memory_diff = total_max_memory_diff / num_executions
                         avg_cost = total_cost / num_executions
 
                         csv_file.write(f"{alpha},{rho},{avg_time:.6f},{avg_max_memory_diff:.6f},{avg_cost:.6f}\n")
@@ -262,7 +258,6 @@ def step2_take_min_cost():
     print(">>> EXECUTING STEP 2: Aggregating Best Alphas (take_min_cost.py)")
     print("="*60)
 
-    # --- Configuration ---
     outputs_dir = "Outputs"
     sub_directories = ["XS", "S", "M", "L", "XL", "XXL", "XXXL"]
     header_fields = ["input", "alpha", "rho", "time(sec)", "max_memory_diff(MB)", "cost"]
@@ -397,7 +392,6 @@ def step3_rho_test():
     print(">>> EXECUTING STEP 3: Benchmarking Rho Convergence (rho_test1.py)")
     print("="*60)
 
-    # --- Configuration ---
     EXECUTABLE = "./Bin/bucket-partitioned-MDS"  
     INPUTS_DIR = "Inputs"
     OUTPUTS_BASE_DIR = "Outputs_Rho"
@@ -552,7 +546,6 @@ def step3_rho_test():
 
         print(f"\nAll benchmarking complete. Averaged results saved in the '{OUTPUTS_BASE_DIR}/' directory.")
 
-    # Call the main logic for step 3
     main()
 
 # ==============================================================================
@@ -563,28 +556,24 @@ def step4_benchmark():
     print(">>> EXECUTING STEP 4: Algorithm Variant Benchmarking (benchmark.py)")
     print("="*60)
 
-    # --- Configuration ---
     BIN_DIR = "./Bin"
     INPUTS_DIR = "Inputs"
     REFERENCE_CSV = "Outputs/Outputs.csv"
     RHO_VALUE = 5000  
     NUM_EXECUTIONS = 5  
 
-    # Mapping of executables to the column names
     VARIANT_MAP = {
         "BPMDS(Custom_MinHeap+Lazy_DFS)": "bucket-partitioned-MDS",
         "CPP_Set": "bucket-partitioned-MDS-set",
         "Non_Lazy_DFS": "bucket-partitioned-MDS-dfs"
     }
 
-    # Ordered list of columns for the output CSVs
     COLUMNS = ["instance name", "size category", "BPMDS(Custom_MinHeap+Lazy_DFS)", "CPP_Set", "Non_Lazy_DFS"]
 
     TIME_CSV = "benchmark_execution_times.csv"
     MEM_CSV = "benchmark_memory_usage.csv"
 
     def load_best_alphas(csv_path):
-        """Loads optimal alpha for each instance from the provided Outputs.csv."""
         best_alphas = {}
         if not os.path.exists(csv_path):
             print("Error: Reference CSV not found.")
@@ -601,7 +590,6 @@ def step4_benchmark():
         return best_alphas
 
     def parse_metrics(file_path):
-        """Parses the temporary output file created by the C++ solver."""
         ex_time, memory = "N/A", "N/A"
         if not os.path.exists(file_path):
             return ex_time, memory
@@ -618,13 +606,11 @@ def step4_benchmark():
         print("Initializing benchmark for variants...")
         best_alphas = load_best_alphas(REFERENCE_CSV)
         
-        # Open both files in 'w' mode to write headers initially
         for csv_file in [TIME_CSV, MEM_CSV]:
             with open(csv_file, 'w', newline='') as f:
                 writer = csv.DictWriter(f, fieldnames=COLUMNS)
                 writer.writeheader()
 
-        # Walk through Inputs-bench/
         for root, dirs, files in os.walk(INPUTS_DIR):
             category = os.path.basename(root)
             
@@ -640,7 +626,6 @@ def step4_benchmark():
                     alpha = best_alphas[instance_base]['alpha']
                     print(f"Benchmarking {file} (Category: {category}, Alpha: {alpha})")
 
-                    # Prepare result rows for this specific instance
                     t_row = {"instance name": file, "size category": category}
                     m_row = {"instance name": file, "size category": category}
 
@@ -686,7 +671,6 @@ def step4_benchmark():
                             t_row[col_name] = "ERROR"
                             m_row[col_name] = "ERROR"
                     
-                    # Append the completed row to the CSV files
                     with open(TIME_CSV, 'a', newline='') as tf, open(MEM_CSV, 'a', newline='') as mf:
                         t_writer = csv.DictWriter(tf, fieldnames=COLUMNS)
                         m_writer = csv.DictWriter(mf, fieldnames=COLUMNS)
@@ -694,11 +678,9 @@ def step4_benchmark():
                         t_writer.writerow(t_row)
                         m_writer.writerow(m_row)
                         
-                        # Ensure data is physically written to disk
                         tf.flush()
                         mf.flush()
 
-        # Clean up the reused temp file when all benchmarking is completely done
         if os.path.exists("temp_out.txt"):
             os.remove("temp_out.txt")
 
@@ -706,24 +688,21 @@ def step4_benchmark():
         print(f"Times saved to: {TIME_CSV}")
         print(f"Memory saved to: {MEM_CSV}")
 
-    # Call main logic for Step 4
     main()
 
 # ==============================================================================
-# STEP 5: threads.py (Store Speedup and efficiency of using different number of threads
-# compared to 1 thread for all Inputs in Scaling_Outputs directory)
+# STEP 5: threads.py (Store Speedup and efficiency of using different number of threads)
 # ==============================================================================
 def step5_threads():
     print("\n" + "="*60)
     print(">>> EXECUTING STEP 5: OpenMP Scaling Benchmark (threads.py)")
     print("="*60)
 
-    # --- Configuration ---
     INPUTS_DIR = "Inputs"
     OUTPUTS_CSV = "Outputs/Outputs.csv"
     SCALING_OUT_DIR = "Scaling_Outputs"
     EXECUTABLE = "./Bin/bucket-partitioned-MDS"
-    RUNS_PER_THREAD = 1  
+    RUNS_PER_THREAD = 5  
     THREAD_COUNTS = [1, 2, 4, 8, 16, 32, 40]
 
     def load_optimal_parameters():
@@ -860,19 +839,293 @@ def step5_threads():
         print("\n" + "="*60)
         print(f"Full pipeline complete! All individual CSVs are safely stored in '{SCALING_OUT_DIR}/'.")
 
-    # Call main logic for Step 5
     main()
+
+# ==============================================================================
+# STEP 6: Generate Bucket Metrics
+# ==============================================================================
+def step6_bucket_metrics():
+    print("\n" + "="*60)
+    print(">>> EXECUTING STEP 6: Generating Bucket Metrics")
+    print("="*60)
+
+    EXECUTABLE = "./Bin/bucket-partitioned-MDS-buckets"
+    OUTPUT_DIR = "Bucket_metrics"
+    REFERENCE_CSV = "Outputs/Outputs.csv"
+    INPUTS_DIR = "Inputs-all"
+    
+    TARGET_INSTANCES = [
+        'Inputs-all/L/Flanders/Flanders1',
+        'Inputs-all/L/Flanders/Flanders2',
+        'Inputs-all/L/Brussels/Brussels1',
+        'Inputs-all/L/Brussels/Brussels2'
+    ]
+
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+    best_params = {}
+    if os.path.exists(REFERENCE_CSV):
+        with open(REFERENCE_CSV, 'r') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                instance = row['input'].strip()
+                alpha = float(row['alpha'])
+                rho = int(float(row['rho'])) if 'rho' in row and row['rho'] else 10000
+                best_params[instance] = {'alpha': alpha, 'rho': rho}
+
+    file_map = {}
+    for root, _, files in os.walk(INPUTS_DIR):
+        for file in files:
+            if file.endswith('.vrp'):
+                file_map[file.replace('.vrp', '')] = os.path.join(root, file)
+
+    for target in TARGET_INSTANCES:
+        base_name = os.path.basename(target).replace('.vrp', '')
+        
+        if base_name not in file_map:
+            print(f"Warning: {base_name} not found in {INPUTS_DIR}. Skipping.")
+            continue
+            
+        input_path = file_map[base_name]
+        
+        alpha = best_params.get(base_name, {}).get('alpha', 15.0) 
+        rho = best_params.get(base_name, {}).get('rho', 10000)
+
+        print(f"Generating metrics for {base_name} (Alpha: {alpha}, Rho: {rho})")
+        
+        cmd = [
+            EXECUTABLE, 
+            f"--alpha={alpha}", 
+            f"--rho={rho}", 
+            f"--input={input_path}", 
+            "--output=temp_bucket_out.txt"
+        ]
+        
+        try:
+            subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+            
+            if os.path.exists("bucket_metrics.csv"):
+                dest = os.path.join(OUTPUT_DIR, f"{base_name}.csv")
+                
+                if os.path.exists(dest):
+                    os.remove(dest)
+                    
+                os.rename("bucket_metrics.csv", dest)
+                print(f"   ✔ Successfully renamed and saved to {dest}")
+            else:
+                print(f"   ✖ Error: bucket_metrics.csv was not generated for {base_name}")
+                
+        except Exception as e:
+            print(f"   ✖ Execution failed for {base_name}: {e}")
+            
+    if os.path.exists("temp_bucket_out.txt"):
+        os.remove("temp_bucket_out.txt")
+
+# ==============================================================================
+# STEP 7: BFS Benchmarking
+# ==============================================================================
+def step7_bfs_benchmarking():
+    print("\n" + "="*60)
+    print(">>> EXECUTING STEP 7: BFS Benchmarking (from Old_Outputs.csv)")
+    print("="*60)
+
+    OLD_CSV = "Old_Outputs.csv"
+    OUTPUT_DIR = "Outputs_BFS"
+    NEW_CSV = os.path.join(OUTPUT_DIR, "BFS_Outputs.csv")
+    INPUTS_DIR = "Inputs-all"
+    EXECUTABLE = "./Bin/bucket-partitioned-MDS-buckets-bfs"
+    NUM_EXECUTIONS = 5
+
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+    if not os.path.exists(OLD_CSV):
+        print(f"Error: '{OLD_CSV}' not found! Skipping BFS Benchmarking.")
+        return
+
+    tasks = []
+    with open(OLD_CSV, 'r', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        headers = [h.strip() for h in reader.fieldnames]
+        reader.fieldnames = headers
+        for row in reader:
+            input_name = row['input'].strip()
+            if not input_name.endswith('.vrp'):
+                input_name += '.vrp'
+            alpha = float(row['alpha'])
+            rho = int(float(row['rho'])) if 'rho' in row else 5000
+            size = row['size'] if 'size' in row else 'UNKNOWN'
+            tasks.append({'file': input_name, 'alpha': alpha, 'rho': rho, 'size': size})
+
+    file_map = {}
+    for root, _, files in os.walk(INPUTS_DIR):
+        for file in files:
+            if file.endswith('.vrp'):
+                file_map[file] = os.path.join(root, file)
+
+    with open(NEW_CSV, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow(["size", "input", "alpha", "rho", "time(sec)", "max_memory_diff(MB)", "cost"])
+        
+        for task in tasks:
+            file_name = task['file']
+            if file_name not in file_map:
+                continue
+            
+            input_path = file_map[file_name]
+            alpha = task['alpha']
+            rho = task['rho']
+            base_name = file_name.replace('.vrp', '')
+            
+            print(f"BFS Benchmarking: {base_name} (Alpha: {alpha}, Rho: {rho})")
+            
+            sum_time = 0.0
+            sum_mem = 0.0
+            sum_cost = 0.0
+            success_runs = 0
+            
+            for _ in range(NUM_EXECUTIONS):
+                temp_output = os.path.join(OUTPUT_DIR, "local_bfs_output.txt")
+                cmd = [
+                    EXECUTABLE, 
+                    f"--alpha={alpha}", 
+                    f"--rho={rho}", 
+                    f"--input={input_path}", 
+                    f"--output={temp_output}"
+                ]
+                
+                try:
+                    subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True, check=True)
+                    with open(temp_output, 'r') as tf:
+                        content = tf.read()
+                        ex_time = float(next((l.split()[-1] for l in content.split('\n') if "Execution time" in l), 0))
+                        memory = float(next((l.split()[-1] for l in content.split('\n') if "Maximum memory" in l), 0))
+                        cost = float(next((l.split()[-1] for l in content.split('\n') if "Cost:" in l), 0))
+                        
+                        sum_time += ex_time
+                        sum_mem += memory
+                        sum_cost += cost
+                        success_runs += 1
+                except Exception:
+                    pass
+            
+            if success_runs == NUM_EXECUTIONS:
+                avg_time = sum_time / NUM_EXECUTIONS
+                avg_mem = sum_mem / NUM_EXECUTIONS
+                avg_cost = sum_cost / NUM_EXECUTIONS
+                writer.writerow([task['size'], base_name, alpha, rho, f"{avg_time:.6f}", f"{avg_mem:.6f}", f"{avg_cost:.6f}"])
+            else:
+                writer.writerow([task['size'], base_name, alpha, rho, "ERROR", "ERROR", "ERROR"])
+            f.flush()
+            
+    if os.path.exists(os.path.join(OUTPUT_DIR, "local_bfs_output.txt")):
+        os.remove(os.path.join(OUTPUT_DIR, "local_bfs_output.txt"))
+        
+    print(f"\nBFS Benchmarking complete! Metrics saved to '{NEW_CSV}'")
+
+# ==============================================================================
+# STEP 8: Generate BFS vs DFS Gaps (BFS_Gaps.csv)
+# ==============================================================================
+def step8_generate_bfs_gaps():
+    print("\n" + "="*60)
+    print(">>> EXECUTING STEP 8: Generating BFS_Gaps.csv")
+    print("="*60)
+
+    DFS_CSV = "Outputs/Outputs.csv"          # Standard DFS outputs
+    BFS_CSV = "Outputs_BFS/BFS_Outputs.csv"  # Generated in Step 7
+    OUT_CSV = "BFS_Gaps.csv"
+    
+    # Target instances and their Best Known Solutions (BKS)
+    BKS_DICT = {
+        'Antwerp1': 477277.00,
+        'Antwerp2': 291350.00,
+        'Brussels1': 501719.00,
+        'Brussels2': 345468.00,
+        'CMT4': 1028.42,
+        'CMT5': 1291.289,
+        'Flanders1': 7240118.00,
+        'Flanders2': 4373244.00,
+        'Leuven1': 192848.00,
+        'Leuven2': 111395.00
+    }
+
+    if not os.path.exists(DFS_CSV) or not os.path.exists(BFS_CSV):
+        print(f"Error: Required CSVs not found. Ensure {DFS_CSV} and {BFS_CSV} exist.")
+        return
+
+    # 1. Load standard DFS costs
+    dfs_costs = {}
+    with open(DFS_CSV, 'r', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            instance = row['input'].strip()
+            if instance in BKS_DICT:
+                dfs_costs[instance] = float(row['cost'])
+
+    # 2. Process BFS outputs, merge with DFS, and calculate gaps
+    results = []
+    with open(BFS_CSV, 'r', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            instance = row['input'].strip()
+            if instance in BKS_DICT:
+                bks = BKS_DICT[instance]
+                bfs_cost = float(row['cost'])
+                
+                # Calculate BFS Gap
+                gap_bfs = ((bfs_cost - bks) / bks) * 100
+                
+                # Calculate DFS Gap 
+                dfs_cost = dfs_costs.get(instance, bfs_cost) # Fallback to bfs cost if missing
+                gap_dfs = ((dfs_cost - bks) / bks) * 100
+                
+                # Append row structure expected by the plotting script
+                results.append({
+                    'size': row.get('size', 'UNKNOWN'),
+                    'input': instance,
+                    'alpha': row.get('alpha', ''),
+                    'rho': row.get('rho', ''),
+                    'time(sec)': row.get('time(sec)', ''),
+                    'max_memory_diff(MB)': row.get('max_memory_diff(MB)', ''),
+                    'cost': bfs_cost,
+                    'bks': bks,
+                    'Gap_BFS(%)': gap_bfs,
+                    'Gap_DFS(%)': gap_dfs
+                })
+
+    if not results:
+        print("No matching target instances found in your BFS outputs. Exiting.")
+        return
+
+    # 3. Write final data to BFS_Gaps.csv
+    fieldnames = ['size', 'input', 'alpha', 'rho', 'time(sec)', 'max_memory_diff(MB)', 
+                  'cost', 'bks', 'Gap_BFS(%)', 'Gap_DFS(%)']
+    
+    with open(OUT_CSV, 'w', newline='', encoding='utf-8') as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        
+        # Sort alphabetically by instance name for a clean CSV
+        results.sort(key=lambda x: x['input'])
+        
+        for row in results:
+            row['cost'] = f"{row['cost']:.5f}"
+            row['Gap_BFS(%)'] = f"{row['Gap_BFS(%)']:.6f}"
+            row['Gap_DFS(%)'] = f"{row['Gap_DFS(%)']:.6f}"
+            writer.writerow(row)
+
+    print(f"✔ Successfully generated '{OUT_CSV}' with {len(results)} target instances.")
 
 # ==============================================================================
 # PIPELINE EXECUTION BLOCK
 # ==============================================================================
 if __name__ == "__main__":
     print("Initializing BP_MDS Master Pipeline...")
-
-    # --- 1. Compile Everything Natively on the Compute Node ---
     compile_binaries()
     step1_script()
     step2_take_min_cost()
     step4_benchmark()    
     step5_threads()      
-    step3_rho_test()     
+    step3_rho_test() 
+    step6_bucket_metrics()
+    step7_bfs_benchmarking()
+    step8_generate_bfs_gaps()

@@ -1,0 +1,31 @@
+
+
+\subsection{Core Algorithm}
+\label{subsec::algorithm}
+
+Algorithm~\ref{alg:bucket-cvrp} presents our Bucket-Partitioned MDS (BP-MDS), a divide-and-conquer parallel and memory-efficient algorithm. The method is governed by two key parameters: the angular partitioning parameter $\alpha$, which controls the number of spatial decompositions, and the exploration parameter $\rho$, which governs the diversity of route constructions. The algorithm takes these two parameters, $\alpha$ and $\rho$, as inputs and produces a feasible, high-quality approximate solution to the CVRP.
+
+\textbf{Divide CVRP:} BP-MDS partitions the two-dimensional plane into angular regions (Line~\ref{alg:bucket-cvrp:line2}) centered at the depot. Customers are assigned to their respective regions based on their angular positions, and together with the depot, are grouped into buckets (Fig.~\ref{fig:2-d-partition}). This step is implemented via the \textsc{Get\_Buckets} procedure (Algorithm~\ref{alg:get-buckets}, detailed in Section~\ref{subsec:create_buckets}). Within each bucket, we conceptually model a complete graph over the assigned vertices without explicitly materializing all the edges.
+
+\textbf{Conquer CVRP in Parallel:} BP-MDS processes each bucket independently in parallel (Lines~\ref{alg:bucket-cvrp:line3}--\ref{alg:bucket-cvrp:line22}), forming the core conquer phase of the algorithm. For every bucket, we construct a Minimum Spanning Tree (MST) over its vertices (Line~\ref{alg:bucket-cvrp:line4}) using \textsc{Construct\_MST} (Algorithm~\ref{alg:construct-mst}, detailed in Section~\ref{subsec:construct_mst}), which provides a sparse backbone for route generation. To explore diverse routing configurations, we perform $\rho$ independent iterations in parallel (Lines~\ref{alg:bucket-cvrp:line6}--\ref{alg:bucket-cvrp:line13}), each generating a candidate solution via a randomized depth-first traversal of the MST (Algorithm~\ref{alg:get-routes-from-random-dfs}, detailed in Section~\ref{subsec:routes_construction_via_random_DFS}). Within each partition, additional parallelism is exploited by spawning sub-threads to solve the corresponding subproblems using different route orderings induced by $\rho$. This results in a hierarchical (multi-level or nested) parallelization scheme. Among the generated candidates, the minimum-cost solution is selected for subsequent processing using a critical section (Line~\ref{alg:bucket-cvrp:line8}) to safely update the shared variables ($min\_cost\_routes$ and $min\_cost$).
+Finally, the partial solutions obtained from all the partitions are refined (Line~\ref{alg:bucket-cvrp:line17}) through intra-route optimization using 2-opt~\cite{Croes_1958, Flood_1956} and the nearest-neighbor heuristics~\cite{Rosenkrantz_1977}, following the approach of Muniasamy et al.~\cite{Muniasamy_VRP} to improve the solution quality. These refined routes are then combined in a consolidation phase to construct a complete feasible solution in a critical section (Lines~\ref{alg:bucket-cvrp:line18}--\ref{alg:bucket-cvrp:line21}) %to avoid race conditions, 
+as both the global route container and the total cost are shared across concurrently running worker threads. 
+
+
+
+\input{sections/helpers/Algos/BP_MDS}
+
+
+
+% \begin{figure*}[htbp]
+%     \centering
+%     \caption{Multi-level Multi-threading}
+%     \label{fig:multi-level-threading}
+%     \includegraphics[width=\textwidth, height=0.4\textheight, keepaspectratio]{assets/multi-level-threading.pdf}
+% \end{figure*}
+
+
+
+
+
+
