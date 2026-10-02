@@ -532,19 +532,6 @@
       pointer-events: none;
     }
     .solve.minimized .solve-peek { display: flex; }
-    body.pdf-capture .solve-panel .steps li {
-      opacity: 1 !important;
-      animation: none !important;
-      transform: none !important;
-    }
-    body.pdf-capture .solve.minimized {
-      grid-template-columns: 34% 66%;
-    }
-    body.pdf-capture .solve.minimized .solve-panel {
-      padding: 28px 28px 24px;
-      pointer-events: auto;
-    }
-    body.pdf-capture .solve-peek { display: none !important; }
     figure.pic img { display: block; width: 100%; height: 480px; object-fit: contain; }
     figcaption { text-align: center; margin-top: 8px; font-size: 16px; color: var(--muted); }
 
@@ -652,20 +639,6 @@
       color: #0f2744;
       border-color: var(--cyan);
     }
-    body.pdf-capture .view-switch { display: none; }
-
-    #pdf-busy {
-      display: none;
-      position: fixed; inset: 0; z-index: 40;
-      background: rgba(15,39,68,.55);
-      color: #fff; letter-spacing: .14em; text-transform: uppercase;
-      align-items: center; justify-content: center;
-    }
-    body.pdf-capture .progress, body.pdf-capture .hint, body.pdf-capture .nav { display: none !important; }
-    body.pdf-capture #pdf-busy { display: flex; }
-    body.pdf-capture .view-frame { display: none; }
-    body.pdf-capture .view-fallback { display: block; }
-
     .cvrp-panels {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
@@ -809,6 +782,7 @@
     html.reflow,
     html.reflow body {
       height: auto;
+      max-width: 100%;
       overflow-x: hidden;
       overflow-y: auto;
       -webkit-text-size-adjust: 100%;
@@ -835,101 +809,142 @@
     }
     html.reflow .slide {
       width: 100%;
+      max-width: 100%;
       height: auto;
       min-height: 0;
+      min-width: 0;
       flex: none;
       overflow: visible;
-      padding: 28px 20px calc(104px + env(safe-area-inset-bottom));
+      padding: 28px 20px calc(112px + env(safe-area-inset-bottom));
       scroll-margin-top: 8px;
+      background: var(--paper);
+      overflow-wrap: break-word;
     }
     html.reflow .slide + .slide { box-shadow: inset 0 8px 0 #07111d; }
     html.reflow h2 { font-size: clamp(30px, 7vw, 44px); }
-    html.reflow .lede { font-size: 18px; max-width: none; }
+    html.reflow .lede { font-size: 18px; max-width: none; line-height: 1.45; }
     html.reflow .kicker { font-size: 13px; letter-spacing: 0.16em; }
 
-    html.reflow .hero { min-height: 100svh; }
+    html.reflow .hero { min-height: 100svh; background: #07111d; padding: 0; }
     html.reflow .hero-bg::after {
       background: linear-gradient(180deg, rgba(7,14,26,.88) 0%, rgba(7,14,26,.84) 46%, rgba(7,14,26,.92) 100%);
     }
     html.reflow .hero-copy {
       height: auto;
       min-height: 100svh;
+      max-width: 100%;
       padding: 24px 22px calc(120px + env(safe-area-inset-bottom));
     }
-    html.reflow .hero h1 { font-size: clamp(72px, 20vw, 132px); }
-    html.reflow .hero .tag { font-size: clamp(24px, 5vw, 34px); max-width: 18em; }
-    html.reflow .hero .lede { font-size: 18px; max-width: 36em; }
-    html.reflow .hero-foot { grid-template-columns: 1fr; gap: 28px; }
+    html.reflow .hero h1 {
+      max-width: 100%;
+      margin-top: 8px;
+      font-size: clamp(56px, 16vw, 108px);
+    }
+    html.reflow .hero .tag {
+      margin-top: 10px;
+      font-size: clamp(22px, 5vw, 32px);
+      max-width: 18em;
+      line-height: 1.3;
+    }
+    html.reflow .hero .lede { margin-top: 12px; font-size: 18px; max-width: 36em; line-height: 1.5; }
+    html.reflow .hero .rule { margin-top: 16px; }
+    html.reflow .acm { margin-top: 16px; }
+    html.reflow .hero-foot { grid-template-columns: 1fr; gap: 18px; margin-top: 22px; padding-top: 14px; }
     html.reflow .conf {
       justify-self: start;
       align-items: flex-start;
       text-align: left;
-      max-width: 22em;
+      max-width: min(22em, 100%);
     }
-    html.reflow .conf-name { font-size: clamp(26px, 6vw, 36px); }
+    html.reflow .conf-name { font-size: clamp(24px, 6vw, 34px); }
     html.reflow .authors { max-width: none; }
+    html.reflow .author,
+    html.reflow .author b,
+    html.reflow .author a,
+    html.reflow .author span { max-width: 100%; }
 
     html.reflow .cvrp-panels,
     html.reflow .mot-top,
     html.reflow .cvrp-rules { grid-template-columns: 1fr; }
-    html.reflow .cvrp-panel svg { height: 280px; flex: none; }
+    html.reflow .cvrp-panel,
+    html.reflow .mot-card,
+    html.reflow .cvrp-rule,
+    html.reflow .mega { min-width: 0; max-width: 100%; }
+    html.reflow .cvrp-panel svg,
+    html.reflow .mot-card svg {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      flex: none;
+    }
+    html.reflow .cvrp-panel svg { aspect-ratio: 640 / 460; max-height: 320px; }
+    html.reflow .mot-card svg { aspect-ratio: 440 / 400; min-height: 0; max-height: 280px; }
     html.reflow .cvrp-panel h3,
     html.reflow .mot-card h3 { font-size: 20px; }
     html.reflow .cvrp-panel .cap,
     html.reflow .cvrp-rule span,
-    html.reflow .mot-card p { font-size: 17px; }
-    html.reflow .mot-card svg { height: 260px; flex: none; }
-    html.reflow .mega b { font-size: 40px; }
-    html.reflow .wall-row { grid-template-columns: 92px 1fr; }
+    html.reflow .mot-card p { font-size: 17px; line-height: 1.45; }
+    html.reflow .mega-row { min-width: 0; }
+    html.reflow .mega b { font-size: clamp(28px, 8vw, 40px); overflow-wrap: anywhere; }
+    html.reflow .mono-line { overflow-wrap: anywhere; line-height: 1.45; }
+    html.reflow .wall-row { grid-template-columns: minmax(72px, 92px) minmax(0, 1fr); align-items: start; }
     html.reflow .table { font-size: 16px; }
     html.reflow .table th,
     html.reflow .table td { padding: 8px 10px; }
-
-    html.reflow .slide-view {
-      display: flex;
-      flex-direction: column;
-      height: 100svh;
-      min-height: 520px;
-      padding: 0 0 calc(76px + env(safe-area-inset-bottom));
+    @media (max-width: 700px) {
+      html.reflow .table thead { display: none; }
+      html.reflow .table,
+      html.reflow .table tbody,
+      html.reflow .table tr,
+      html.reflow .table td { display: block; width: 100%; }
+      html.reflow .table tr {
+        padding: 12px 14px 14px;
+        border-bottom: 1px solid var(--rule);
+      }
+      html.reflow .table td { border: 0; padding: 2px 0; }
+      html.reflow .table td:nth-child(2) {
+        font-family: "IBM Plex Mono", ui-monospace, monospace;
+        color: #0369a1;
+        font-size: 14px;
+      }
     }
-    html.reflow .view-switch {
-      position: relative;
-      top: auto;
-      left: auto;
-      transform: none;
-      width: 100%;
-      flex-wrap: wrap;
-      justify-content: flex-start;
-    }
-    html.reflow .view-shell { flex: 1; min-height: 0; height: auto; }
-    html.reflow .view-frame { min-height: 420px; }
 
     html.reflow .solve {
       display: flex;
       flex-direction: column;
-      padding: 0 0 calc(88px + env(safe-area-inset-bottom));
+      padding: 0 0 calc(112px + env(safe-area-inset-bottom));
       background: #0f2744;
     }
     html.reflow .solve-fig {
       order: -1;
-      height: min(72vw, 520px);
-      min-height: 240px;
+      height: auto;
+      min-height: 0;
+    }
+    html.reflow .solve-photo {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      max-height: 420px;
+      object-fit: contain;
     }
     html.reflow .solve-panel {
       height: auto;
-      padding: 28px 22px 8px;
+      padding: 28px 22px 18px;
     }
-    html.reflow .solve-panel h2 { font-size: clamp(30px, 7vw, 40px); }
+    html.reflow .solve-panel h2 { font-size: clamp(28px, 7vw, 40px); }
     html.reflow .solve.minimized { display: flex; }
     html.reflow .solve.minimized .solve-panel {
       overflow: visible;
-      padding: 28px 22px 8px;
+      padding: 28px 22px 18px;
       pointer-events: auto;
     }
     html.reflow .solve-min,
     html.reflow .solve-peek { display: none; }
-    html.reflow .hit b { font-size: 36px; }
-    html.reflow .solve-foot { font-size: 14px; }
+    html.reflow .hits { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    html.reflow .hit { min-width: 0; }
+    html.reflow .hit b { font-size: clamp(26px, 7vw, 36px); overflow-wrap: anywhere; }
+    html.reflow .hit span { overflow-wrap: anywhere; }
+    html.reflow .solve-foot { font-size: 14px; line-height: 1.4; }
 
     html.reflow .hint { display: none; }
     html.reflow .progress { position: fixed; }
@@ -957,18 +972,38 @@
       html.reflow .cvrp-panels { grid-template-columns: 1fr 1fr 1fr; }
       html.reflow .mot-top { grid-template-columns: 1fr 1fr 1fr; }
       html.reflow .cvrp-rules { grid-template-columns: 1fr 1fr 1fr 1fr; }
-      html.reflow .cvrp-panel svg { height: 240px; }
+      html.reflow .cvrp-panel svg { max-height: 240px; }
     }
+
+    /* Route plot: full viewport in the scroll layout, including laptop windows. */
+    html.reflow .slide-view {
+      display: flex;
+      flex-direction: column;
+      height: 100svh;
+      min-height: 560px;
+      padding: 0 0 calc(76px + env(safe-area-inset-bottom));
+      overflow: hidden;
+    }
+    html.reflow .view-switch {
+      position: relative;
+      top: auto;
+      left: auto;
+      transform: none;
+      width: 100%;
+      max-width: 100%;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+    }
+    html.reflow .view-shell { flex: 1; min-height: 0; height: auto; }
+    html.reflow .view-frame { min-height: 420px; height: 100%; }
   </style>
-  <script src="vendor/html2canvas.min.js"></script>
-  <script src="vendor/jspdf.umd.min.js"></script>
   <script src="vendor/images.js"></script>
 </head>
 <body>
   <div class="viewport" id="viewport">
     <div class="stage" id="stage">
       <div class="progress" id="progress"></div>
-      <div class="hint">← →  ·  F fullscreen  ·  P pdf</div>
+      <div class="hint">← →  ·  F fullscreen</div>
 
       <div class="slides" id="slides">
         <section class="slide hero" aria-label="Overview">
@@ -1288,9 +1323,6 @@
           <button class="icon" id="full" type="button" aria-label="Fullscreen">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H4v4M16 3h4v4M8 21H4v-4M16 21h4v-4"/></svg>
           </button>
-          <button class="icon" id="pdf" type="button" aria-label="Export PDF">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M8 13h8M8 17h5"/></svg>
-          </button>
         </div>
       </nav>
     </div>
@@ -1299,10 +1331,8 @@
   <div class="inspect" id="inspect">
     <iframe class="view-frame" id="inspect-frame" title="Inspect BKS routes"></iframe>
   </div>
-  <div id="pdf-busy">Exporting PDF…</div>
-
   <script>
-    const STAGE_W = 1920, STAGE_H = 1080, LIVE = 3, SOLVE = 4, total = 5;
+    const STAGE_W = 1920, STAGE_H = 1080, LIVE = 3, SOLVE = 4;
     const VIEWS = [
       { id: "brussels1", name: "Brussels 1", src: "views/BKS_Brussels1_routes.html" },
       { id: "brussels2", name: "Brussels 2", src: "views/BKS_Brussels2_routes.html" },
@@ -1317,7 +1347,6 @@
     const prev = document.getElementById("prev");
     const next = document.getElementById("next");
     const full = document.getElementById("full");
-    const pdfBtn = document.getElementById("pdf");
     const viewFrame = document.getElementById("view-frame");
     const inspectFrame = document.getElementById("inspect-frame");
 
@@ -1326,8 +1355,22 @@
     const slideEls = [...document.querySelectorAll("#slides .slide")];
 
     function presentationMode() {
-      if (document.body.classList.contains("pdf-capture")) return true;
       return window.innerWidth >= 1280 && window.innerHeight >= 720;
+    }
+
+    function inReflow() {
+      return document.documentElement.classList.contains("reflow");
+    }
+
+    function shownSlides() {
+      return slideEls;
+    }
+
+    function placeIndex() {
+      const shown = shownSlides();
+      if (shown.includes(slideEls[i])) return;
+      const later = shown.find((el) => slideEls.indexOf(el) > i);
+      i = slideEls.indexOf(later || shown[shown.length - 1]);
     }
 
     function setSolveMin(on) {
@@ -1395,13 +1438,16 @@
     function pad(n) { return String(n).padStart(2, "0"); }
 
     function render(doScroll) {
-      const reflow = document.documentElement.classList.contains("reflow");
+      const reflow = inReflow();
+      placeIndex();
+      const shown = shownSlides();
+      const pos = shown.indexOf(slideEls[i]);
       if (reflow) slides.style.transform = "none";
       else slides.style.transform = "translateX(" + (-i * STAGE_W) + "px)";
-      pager.textContent = pad(i + 1) + " / " + pad(total);
-      progress.style.width = ((i + 1) / total * 100) + "%";
-      prev.disabled = i === 0;
-      next.disabled = i === total - 1;
+      pager.textContent = pad(pos + 1) + " / " + pad(shown.length);
+      progress.style.width = ((pos + 1) / shown.length * 100) + "%";
+      prev.disabled = pos === 0;
+      next.disabled = pos === shown.length - 1;
       document.body.classList.toggle("on-view", !reflow && i === LIVE);
       if ((reflow || i === LIVE) && !viewFrame.src) setView(currentView);
       if (i === SOLVE || reflow) {
@@ -1420,8 +1466,12 @@
 
     function go(d) {
       if (document.body.classList.contains("inspect-open")) return;
-      i = Math.max(0, Math.min(total - 1, i + d));
-      render(document.documentElement.classList.contains("reflow"));
+      const shown = shownSlides();
+      let pos = shown.indexOf(slideEls[i]);
+      if (pos < 0) pos = 0;
+      pos = Math.max(0, Math.min(shown.length - 1, pos + d));
+      i = slideEls.indexOf(shown[pos]);
+      render(inReflow());
     }
 
     prev.addEventListener("click", () => go(-1));
@@ -1436,10 +1486,14 @@
       if (document.body.classList.contains("inspect-open")) return;
       if (e.key === "ArrowRight" || e.key === " " || e.key === "PageDown") { e.preventDefault(); go(1); }
       if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); go(-1); }
-      if (e.key === "Home") { e.preventDefault(); i = 0; render(document.documentElement.classList.contains("reflow")); }
-      if (e.key === "End") { e.preventDefault(); i = total - 1; render(document.documentElement.classList.contains("reflow")); }
+      if (e.key === "Home") { e.preventDefault(); i = 0; render(inReflow()); }
+      if (e.key === "End") {
+        e.preventDefault();
+        const shown = shownSlides();
+        i = slideEls.indexOf(shown[shown.length - 1]);
+        render(inReflow());
+      }
       if (e.key === "f" || e.key === "F") { e.preventDefault(); toggleFull(); }
-      if (e.key === "p" || e.key === "P") { e.preventDefault(); exportPdf(); }
       if ((e.key === "m" || e.key === "M") && i === SOLVE) {
         e.preventDefault();
         setSolveMin(!solveSlide.classList.contains("minimized"));
@@ -1452,75 +1506,6 @@
       else document.exitFullscreen();
     }
     full.addEventListener("click", toggleFull);
-
-    function frame() { return new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))); }
-
-    async function exportPdf() {
-      if (pdfBtn.disabled) return;
-      if (typeof html2canvas !== "function" || !window.jspdf) {
-        window.alert("PDF libraries failed to load.");
-        return;
-      }
-      closeInspect();
-      pdfBtn.disabled = true;
-      const restored = i;
-      const slideEls = [...document.querySelectorAll("#slides .slide")];
-      const busy = document.getElementById("pdf-busy");
-      const prevTransition = slides.style.transition;
-      document.documentElement.classList.remove("reflow");
-      stage.style.transform = "none";
-      document.body.classList.add("pdf-capture");
-      slides.style.transition = "none";
-      try {
-        if (document.fonts && document.fonts.ready) await document.fonts.ready;
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({ orientation: "landscape", unit: "mm", format: [338.67, 190.5] });
-        const pageW = pdf.internal.pageSize.getWidth();
-        const pageH = pdf.internal.pageSize.getHeight();
-        for (let s = 0; s < total; s++) {
-          busy.textContent = "Exporting " + (s + 1) + " / " + total;
-          slideEls.forEach((el, n) => {
-            el.style.display = n === s ? "flex" : "none";
-            el.style.flex = "none";
-            el.style.width = STAGE_W + "px";
-            el.style.height = STAGE_H + "px";
-          });
-          slides.style.transform = "none";
-          await frame();
-          await new Promise((r) => setTimeout(r, 80));
-          const canvas = await html2canvas(stage, {
-            scale: 1,
-            width: STAGE_W,
-            height: STAGE_H,
-            backgroundColor: s === 0 ? "#0f2744" : "#f4f7fb",
-            logging: false,
-            useCORS: true,
-            ignoreElements: (el) => el.id === "pdf-busy" || el.id === "inspect"
-          });
-          const img = canvas.toDataURL("image/jpeg", 0.92);
-          if (s > 0) pdf.addPage();
-          pdf.addImage(img, "JPEG", 0, 0, pageW, pageH);
-        }
-        pdf.save("BP-MDS-overview.pdf");
-      } catch (err) {
-        console.error(err);
-        window.alert("PDF export failed: " + (err && err.message ? err.message : err));
-      } finally {
-        slideEls.forEach((el) => {
-          el.style.display = "";
-          el.style.flex = "";
-          el.style.width = "";
-          el.style.height = "";
-        });
-        slides.style.transition = prevTransition;
-        document.body.classList.remove("pdf-capture");
-        i = restored;
-        applyMode();
-        pdfBtn.disabled = false;
-      }
-    }
-
-    pdfBtn.addEventListener("click", exportPdf);
 
     let touchX = null;
     stage.addEventListener("touchstart", (e) => {
@@ -1536,11 +1521,12 @@
     }, { passive: true });
 
     window.addEventListener("scroll", () => {
-      if (!document.documentElement.classList.contains("reflow") || Date.now() < scrollLock) return;
+      if (!inReflow() || Date.now() < scrollLock) return;
       const mark = window.innerHeight * 0.35;
-      let idx = 0;
-      slideEls.forEach((el, n) => {
-        if (el.getBoundingClientRect().top <= mark) idx = n;
+      const shown = shownSlides();
+      let idx = slideEls.indexOf(shown[0]);
+      shown.forEach((el) => {
+        if (el.getBoundingClientRect().top <= mark) idx = slideEls.indexOf(el);
       });
       if (idx === i) return;
       i = idx;
