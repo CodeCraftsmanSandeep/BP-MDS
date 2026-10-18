@@ -187,12 +187,19 @@
     }
     .conf-place::after { content: "  \2197"; letter-spacing: 0; }
     .conf:hover { color: #7dd3fc; border-bottom-color: #7dd3fc; }
+    .paper-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+      max-width: 100%;
+    }
     .acm {
       display: inline-flex;
       flex-direction: column;
       align-items: flex-start;
       gap: 4px;
-      margin-top: 26px;
+      margin-top: 0;
       width: fit-content;
       max-width: 100%;
       padding: 12px 18px 14px;
@@ -1018,10 +1025,16 @@
                 Angular buckets around the depot. MST and randomized DFS on each core.
                 Five million customers in eight minutes.
               </p>
-              <a class="acm" href="https://dl.acm.org/doi/10.1145/3832810.3832887" target="_blank" rel="noopener noreferrer">
-                <span class="acm-label">See on ACM Digital Library</span>
-                <span class="acm-doi">10.1145/3832810.3832887</span>
-              </a>
+              <div class="paper-links">
+                <a class="acm" href="https://dl.acm.org/doi/10.1145/3832810.3832887" target="_blank" rel="noopener noreferrer">
+                  <span class="acm-label">See on ACM Digital Library</span>
+                  <span class="acm-doi">10.1145/3832810.3832887</span>
+                </a>
+                <a class="acm" href="https://github.com/CodeCraftsmanSandeep/BP-MDS" target="_blank" rel="noopener noreferrer">
+                  <span class="acm-label">See on GitHub</span>
+                  <span class="acm-doi">CodeCraftsmanSandeep/BP-MDS</span>
+                </a>
+              </div>
             </div>
             <div class="hero-foot">
             <div class="authors">
