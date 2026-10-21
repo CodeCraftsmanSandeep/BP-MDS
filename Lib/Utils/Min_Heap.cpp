@@ -41,16 +41,13 @@ void Min_Heap::DecreaseKey(const Min_Heap_Node& node)
     auto vertex = node.v;
     auto index  = vertex_to_index_map[vertex];
     
-    if(index > last_index) 
+    if(index > last_index)
     {
-        // The vertex is already present in MST and that is why it is out of heap
-        // So no need to reduce further
         return;
     }
 
-    if(vec[index].weight <= node.weight) 
+    if(vec[index].weight <= node.weight)
     {
-        // Current weight <= new weight, so no need to reduce further
         return;
     }
 

@@ -9,11 +9,6 @@
 
 std::string Command_Line_Args::get_usage()
 {
-    /*
-    * get_usage: Helper function to get how to run the executable 
-    * @return: Returns string which contains usage information of the executable
-    */
-
     std::ostringstream usage;
 
     usage << "Allowed arguments:\n"
@@ -37,16 +32,8 @@ std::string Command_Line_Args::get_usage()
     return usage.str();
 }
 
-
 void Command_Line_Args::set_alpha(int argc, char** argv)
 {
-    /* 
-    * set_alpha: Helper function to get alpha from command line arguments and store it in data attribute
-    * @param argc: Number of command-line arguments 
-    * @param argv: Array of command-line arguments
-    * @return: Returns nothing
-    */
-
     bool alpha_passed = false;
 
     for(int i = 1; i < argc; i++)
@@ -77,13 +64,6 @@ void Command_Line_Args::set_alpha(int argc, char** argv)
 
 void Command_Line_Args::set_rho(int argc, char** argv)
 {
-    /* 
-    * set_rho: Helper function to get rho from command line arguments and store it in data attribute
-    * @param argc: Number of command-line arguments 
-    * @param argv: Array of command-line arguments
-    * @return: Returns nothing
-    */
-
     bool rho_passed = false;
 
     for(int i = 1; i < argc; i++)
@@ -114,15 +94,7 @@ void Command_Line_Args::set_rho(int argc, char** argv)
 
 void Command_Line_Args::set_input_stream(int argc, char** argv)
 {
-    /* 
-    * set_input_stream: Helper function to set up the input stream from command-line arguments, 
-                        defaults to std::cin if no input file is provided
-    * @param argc: Number of command-line arguments 
-    * @param argv: Array of command-line arguments
-    * @return: Returns nothing
-    */
-
-    input_stream = &std::cin; // Default value
+    input_stream = &std::cin;
     bool input_file_passed = false;
 
     for (int i = 1; i < argc; i++) 
@@ -148,15 +120,7 @@ void Command_Line_Args::set_input_stream(int argc, char** argv)
 
 void Command_Line_Args::set_output_stream(int argc, char** argv)
 {
-    /* 
-    * set_output_stream: Helper function to set up the output stream from command-line arguments, 
-                        defaults to std::cout if no output file is provided
-    * @param argc: Number of command-line arguments 
-    * @param argv: Array of command-line arguments
-    * @return: Returns nothing
-    */
-
-    output_stream = &std::cout; // Default value
+    output_stream = &std::cout;
     bool output_file_passed = false;
     for (int i = 1; i < argc; i++) 
     {
@@ -171,7 +135,6 @@ void Command_Line_Args::set_output_stream(int argc, char** argv)
             std::string filename = arg.substr(9);
             std::filesystem::path out_path(filename);
 
-            // create directories if needed
             if (out_path.has_parent_path()) 
             {
                 std::filesystem::create_directories(out_path.parent_path());
@@ -189,53 +152,37 @@ void Command_Line_Args::set_output_stream(int argc, char** argv)
 
 Command_Line_Args::Command_Line_Args(int argc, char** argv) 
 {
-    /* 
-    * Command_Line_Args: Constructor parses the command-line arguments and initializes the class members 
-    * @param argc: Number of command-line arguments
-    * @param argv: Array of command-line arguments 
-    */
-
-    // Parsing mandatory function parameters 
     this->set_alpha(argc, argv);
     this->set_rho(argc, argv);
 
-    // Parsing optional function parameters
     this->set_input_stream(argc, argv);
     this->set_output_stream(argc, argv);
 }
 
 std::istream& Command_Line_Args::input() const 
 { 
-    /*
-    * input: Function to access input stream
-    */
+    
 
     return *input_stream; 
 }
 
 std::ostream& Command_Line_Args::output() const
 { 
-    /*
-    * output: Function to access output stream
-    */
+    
 
     return *output_stream; 
 }
 
 double Command_Line_Args::get_alpha() const 
 { 
-    /*
-    * get_alpha: Function to get alpha value
-    */
+    
 
     return alpha; 
 }
 
 int Command_Line_Args::get_rho() const 
 { 
-    /*
-    * get_rho: Function to get rho value
-    */
+    
 
     return rho; 
 }

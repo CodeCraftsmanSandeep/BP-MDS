@@ -2,7 +2,6 @@
 
 #include "Utils.h"
 
-
 std::ostream& ERROR_FILE = std::cout;
 void handle_error(
     const char*       file,
