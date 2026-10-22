@@ -10,13 +10,6 @@ namespace Bucket_Partitioned_MDS
         const double _cost, 
         const std::vector <std::vector <node_t>>& _routes) 
     {
-        /*
-        * Solution: Constructor for creating the object
-        * @param _time_for_solving: Time consumed for solving the problem
-        * @param _cost: Cost required by the vehicles to cover the _routes
-        * @param _routes: Routes that should be traversed by the vehicles
-        */
-
         time_for_solving = _time_for_solving;
         maxMB_difference = _maxMB_difference;
         cost = _cost;
@@ -26,15 +19,6 @@ namespace Bucket_Partitioned_MDS
     bool Solution::verify(
         const CVRP& cvrp) const
     {
-        /*
-        * verify: Verifies the correctness of the solution
-        *   1. For every route, the vehicle capacity constraint is respected
-        *   2. All customers appear in exactly one route
-        *   3. The cost returned by the solver is same as actual cost of the routes
-        * @param cvrp: CVRP object to solve
-        * @return: Returns true if the above verification steps are satisfied else false
-        */
-
         std::vector <int> appear_count(cvrp.size(), 0);
         distance_t computed_cost = 0;
         for(const auto& route: routes)
@@ -79,12 +63,6 @@ namespace Bucket_Partitioned_MDS
     void Solution::print(
         std::ostream& output) const 
     {
-        /*
-        * print: Function to print the execution time, cost and routes 
-        * @param output: Output stream the contents should be printed
-        * @return: Returns nothing
-        */
-        
         output << "Execution time for solving (sec): " << this->time_for_solving << "\n";
         output << "Maximum memory difference during solving (MB): " << this->maxMB_difference << "\n";
         output << "Cost: " << this->cost << "\n";
